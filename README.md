@@ -1,7 +1,7 @@
 ### course
 Using R in Hydrology - EGU2017 Short Course by YHS  
 Organized by Berry Boessenkool, PhD student at Potsdam University (Germany)  
-**Please register for the short course per email via berry-b@gmx.de.  **
+__Please register for the short course per email via berry-b@gmx.de.__  
 For best results: Make sure your laptop is up to the task:
 
 
