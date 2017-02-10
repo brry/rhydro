@@ -1,5 +1,5 @@
 ### course
-Using R in Hydrology - EGU2017 Short Course by YHS  
+Using R in Hydrology - [EGU2017 Short Course](http://meetingorganizer.copernicus.org/EGU2017/session/25731) by YHS  
 Organized by Berry Boessenkool, PhD student at Potsdam University (Germany)  
 __To reserve a seat, please register via berry-b@gmx.de.__  
 If you want to follow along on your laptop, please make sure it is up to the task:
@@ -17,7 +17,7 @@ This will give you a confirmation message if everything is fine and give instruc
 ### install
 install R and Rstudio:
 * R: https://cloud.r-project.org, [Official](https://cran.r-project.org/bin/linux/ubuntu/README.html) and [helpful](https://www.r-bloggers.com/how-to-install-r-on-linux-ubuntu-16-04-xenial-xerus) hints for Linux Ubuntu users
-* Rstudio: https://www.rstudio.com/products/rstudio/#Desktop
+* Rstudio: https://www.rstudio.com/products/rstudio/download/#Desk
 * updating R on windows is simple: https://github.com/talgalili/installr/blob/master/README.md
 
 Installing packages usually is easy from within R:
