@@ -16,11 +16,22 @@ This will give you a confirmation message if everything is fine and give instruc
 
 ### install
 install R and Rstudio:
-* R: https://cloud.r-project.org, [Official](https://cran.r-project.org/bin/linux/ubuntu/README.html) and [helpful](https://www.r-bloggers.com/how-to-install-r-on-linux-ubuntu-16-04-xenial-xerus) hints for Linux Ubuntu users
-* Rstudio: https://www.rstudio.com/products/rstudio/download/#Desk
-* updating R on windows is simple: https://github.com/talgalili/installr/blob/master/README.md
 
-Installing packages usually is easy from within R:
+* R: https://cloud.r-project.org (Linux Ubuntu instructions below)
+* Rstudio: https://www.rstudio.com/products/rstudio/download/#Desk
+* updating R on Windows is simple: https://github.com/talgalili/installr/blob/master/README.md
+* R installation on Ubuntu 16 xenial (from [Kris Eberwein](https://www.r-bloggers.com/how-to-install-r-on-linux-ubuntu-16-04-xenial-xerus)): open a terminal (CTRL+ALT+T) and paste (CTRL+SHIFT+V) the following:
+
+```
+sudo echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | sudo tee -a /etc/apt/sources.list
+gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
+gpg -a --export E084DAB9 | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install r-base r-base-dev
+```
+
+
+Installing add-on R packages usually is easy from within R (and without admin rights):
 ```R
 install.packages("ggplot2")
 ```
@@ -31,6 +42,7 @@ Here's the [official information](https://cran.r-project.org/bin/linux/ubuntu/RE
 
 ### r-intro
 If you need an introduction (or a refresher) to R, we suggest:
+
 * http://stat545.com/topics.html (excellent tutorial)
 * https://www.edx.org/course/introduction-r-programming-microsoft-dat204x-0 (Datacamp, with login, but free)
 * http://tryr.codeschool.com/levels/1/challenges/1 (codeschool, interactive, login to save progress)
