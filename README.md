@@ -61,6 +61,12 @@ Slides will be linked here sometime.
 
 
 ### resources
-* http://abouthydrology.blogspot.co.uk/2012/08/r-resources-for-hydrologists.html 
-* more to come
+* [R-Resources for Hyrology](http://abouthydrology.blogspot.co.uk/2012/08/r-resources-for-hydrologists.html) - A huge list of R-resources about hydrology
+* [hdtools](https://ropensci.github.io/hddtools/) - An R package, which facilitates access to a variety of online open data sources relevant for hydrologists
+* [airGR](https://cran.r-project.org/web/packages/airGR/vignettes/airGR.html) - The description of the airGR package
+* [R-weekly](https://rweekly.org/) - A weekly newsletter about all things R
+* [Rbloggers](https://www.r-bloggers.com/) - A blog aggregator about R
+* [Shiny](https://shiny.rstudio.com/) - The web application framework for R/Rstudio
+* [Rmarkdown](http://rmarkdown.rstudio.com/) - The document/notebook generation framework for R/Rstudio
+* [Github guides](https://guides.github.com/) - Introduction to gitHUB
 
