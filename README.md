@@ -29,7 +29,7 @@ install R and Rstudio:
 * R: https://cloud.r-project.org (Linux Ubuntu instructions below)
 * Rstudio: https://www.rstudio.com/products/rstudio/download/#Desk
 * updating R on Windows is simple: https://github.com/talgalili/installr/blob/master/README.md
-* R installation on Ubuntu 16 xenial (from [Kris Eberwein](https://www.r-bloggers.com/how-to-install-r-on-linux-ubuntu-16-04-xenial-xerus)): open a terminal (CTRL+ALT+T) and paste (CTRL+SHIFT+V) the following:
+* R installation on Ubuntu 16 xenial (from [Kris Eberwein](https://www.r-bloggers.com/how-to-install-r-on-linux-ubuntu-16-04-xenial-xerus) and [Dean Attali](https://www.digitalocean.com/community/tutorials/how-to-set-up-r-on-ubuntu-14-04)): open a terminal (CTRL+ALT+T) and paste (CTRL+SHIFT+V) the following:
 
 ```
 sudo echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | sudo tee -a /etc/apt/sources.list
