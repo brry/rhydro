@@ -1,6 +1,7 @@
 [course](#course) 
 / [check](#check) 
 / [install](#install) 
+/ [packages](#packages) 
 / [r-intro](#r-intro) 
 / [topics](#topics) 
 / [slides](#slides) 
@@ -28,7 +29,7 @@ install R and Rstudio:
 * R: https://cloud.r-project.org (Linux Ubuntu instructions below)
 * Rstudio: https://www.rstudio.com/products/rstudio/download/#Desk
 * updating R on Windows is simple: https://github.com/talgalili/installr/blob/master/README.md
-* R installation on Ubuntu 16 xenial (from [Kris Eberwein](https://www.r-bloggers.com/how-to-install-r-on-linux-ubuntu-16-04-xenial-xerus) and [Dean Attali](https://www.digitalocean.com/community/tutorials/how-to-set-up-r-on-ubuntu-14-04)): open a terminal (CTRL+ALT+T) and paste (CTRL+SHIFT+V) the following:
+* R installation on Ubuntu (from [Kris Eberwein](https://www.r-bloggers.com/how-to-install-r-on-linux-ubuntu-16-04-xenial-xerus) and [Dean Attali](https://www.digitalocean.com/community/tutorials/how-to-set-up-r-on-ubuntu-14-04)): open a terminal (CTRL+ALT+T) and paste (CTRL+SHIFT+V) the following lines:
 
 ```
 sudo echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | sudo tee -a /etc/apt/sources.list
@@ -37,9 +38,15 @@ gpg -a --export E084DAB9 | sudo apt-key add -
 sudo apt-get update
 sudo apt-get install r-base r-base-dev
 ```
+Replace `xenial` with e.g. `trusty` if you have another Ubuntu version:  
+Ubuntu 16.10 yakkety  
+Ubuntu 16.04 xenial  
+Ubuntu 14.04 trusty  
+Ubuntu 12.04 precise  
 
+### packages
 
-Installing add-on R packages usually is easy from within R (and without admin rights):
+Installing add-on R packages usually is easy from within R (and works without admin rights):
 ```R
 install.packages("ggplot2")
 ```
