@@ -10,7 +10,7 @@
 ### course
 Using R in Hydrology - [EGU2017 Short Course](http://meetingorganizer.copernicus.org/EGU2017/session/25731) by YHS  
 Organized by Berry Boessenkool, PhD student at Potsdam University (Germany)  
-__To reserve a seat, please register via berry-b@gmx.de__  (4 registered so far, 2017-03-28).
+__To reserve a seat, please register via berry-b@gmx.de__  (9 registered so far, 2017-04-04).
 If you want to follow along on your laptop, please make sure it is up to the task:
 
 
@@ -61,7 +61,7 @@ If you need an introduction (or a refresher) to R, we suggest:
 * http://stat545.com/topics.html (excellent tutorial)
 * https://www.edx.org/course/introduction-r-programming-microsoft-dat204x-0 (Datacamp, with login, but free)
 * http://tryr.codeschool.com/levels/1/challenges/1 (codeschool, interactive, login to save progress)
-* http://bit.ly/rcBerry (Berry's R course material)
+* https://github.com/brry/course/raw/master/RcourseBerry.pdf (Berry's R course material)
 
 
 ### topics
