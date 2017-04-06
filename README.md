@@ -11,6 +11,7 @@
 Using R in Hydrology - [EGU2017 Short Course](http://meetingorganizer.copernicus.org/EGU2017/session/25731) by YHS  
 Organized by Berry Boessenkool, PhD student at Potsdam University (Germany)  
 __To reserve a seat, please register via berry-b@gmx.de__  (9 registered so far, 2017-04-04).
+
 If you want to follow along on your laptop, please make sure it is up to the task:
 
 
