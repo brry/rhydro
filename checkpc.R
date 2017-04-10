@@ -23,6 +23,14 @@ p <- "OSMscale"
 if(!requireNamespace(p, quietly=TRUE)) stop("package '", p, "' is not installed. ",
    "Please run \ninstall.packages('",p,"')\nIf that fails, read the instructions at ",
    "\nhttps://github.com/brry/OSMscale#installation", call.=FALSE)
+
+if(Sys.info()["sysname"]=="Linux")
+{
+p <- "sf"
+if(!requireNamespace(p, quietly=TRUE)) stop("package '", p, "' is not installed. ",
+   "Please run \ninstall.packages('",p,"')\nIf that fails, read the instructions at ",
+   "\nhttps://github.com/brry/rhydro#packages", call.=FALSE)
+}
 rm(p)
 
 packs <- c("hydroGOF","airGR","leaflet","rgdal","mapview","sf")

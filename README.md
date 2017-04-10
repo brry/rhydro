@@ -15,6 +15,7 @@ __To reserve a seat, please register via berry-b@gmx.de__  (10 registered so far
 Participants are invited to post and discuss questions in the 
 [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
 
+If you're new to R, you can get started [below](#install). 
 If you want to follow along on your laptop, please make sure it is up to the task:
 
 
@@ -81,6 +82,14 @@ On Linux, some packages with external dependencies (like rJava) can be more diff
 In such cases, you probably just want to open a terminal (CTRL+ALT+T) and paste (CTRL+SHIFT+V) `sudo apt-get install r-cran-rjava` (all lower-cased). 
 Here's the [official information](https://cran.r-project.org/bin/linux/ubuntu/README.html#supported-packages) on this topic.
 
+Installing the brand new `sf` package for spatial data is a bit tricky on Linux because it needs a recent version of gdal. 
+If `install.packages("sf")` does not work, please try the following:
+```
+sudo apt-get install libudunits2-dev
+sudo add-apt-repository ppa:ubuntugis/ppa && sudo apt-get update
+sudo apt-get install gdal-bin
+sudo apt install libgdal-dev libproj-dev
+```
 
 ### r-intro
 If you need an introduction (or a refresher) to R, we suggest:
