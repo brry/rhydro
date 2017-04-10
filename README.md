@@ -1,11 +1,11 @@
 [course](#course) 
 / [check](#check) 
-/ [install](#install) 
-/ [packages](#packages) 
-/ [r-intro](#r-intro) 
 / [topics](#topics) 
 / [slides](#slides) 
 / [resources](#resources) 
+/ [install](#install) 
+/ [packages](#packages) 
+/ [r-intro](#r-intro) 
 
 ### course
 Using R in Hydrology - [EGU2017 Short Course](http://meetingorganizer.copernicus.org/EGU2017/session/25731) by YHS  
@@ -25,6 +25,29 @@ You can check if your laptop is prepared for the course by running the
 source("https://raw.githubusercontent.com/brry/rhydro/master/checkpc.R")
 ```
 This will give you a confirmation message if everything is fine and give instructions otherwise.
+
+
+### topics
+* using R as GIS (rainfall shapefile, Kriging, sf, leaflet, mapview)
+* river discharge time-series visualisation and extreme value statistics
+* hydrological modelling with airGR
+* Exploratory Data Analysis including flow duration curve and trend analysis on time-series
+
+
+### slides
+Slides will be linked here once they are uploaded.
+
+
+### resources
+* [R-Resources for Hyrology](http://abouthydrology.blogspot.co.uk/2012/08/r-resources-for-hydrologists.html) - A huge list of R-resources about hydrology
+* [hdtools](https://ropensci.github.io/hddtools/) - An R package, which facilitates access to a variety of online open data sources relevant for hydrologists
+* [airGR](https://cran.r-project.org/web/packages/airGR/vignettes/airGR.html) - The description of the airGR package
+* [R-weekly](https://rweekly.org/) - A weekly newsletter about all things R
+* [Rbloggers](https://www.r-bloggers.com/) - A blog aggregator about R
+* [Shiny](https://shiny.rstudio.com/) - The web application framework for R/Rstudio
+* [Rmarkdown](http://rmarkdown.rstudio.com/) - The document/notebook generation framework for R/Rstudio
+* [Github guides](https://guides.github.com/) - Introduction to gitHUB
+* [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
 
 
 ### install
@@ -66,27 +89,4 @@ If you need an introduction (or a refresher) to R, we suggest:
 * https://www.edx.org/course/introduction-r-programming-microsoft-dat204x-0 (Datacamp, with login, but free)
 * http://tryr.codeschool.com/levels/1/challenges/1 (codeschool, interactive, login to save progress)
 * https://github.com/brry/course/raw/master/RcourseBerry.pdf (Berry's R course material)
-
-
-### topics
-* river discharge time-series visualisation and extreme value statistics, 
-* using R as GIS (rainfall shapefile, Kriging, sf, leaflet, mapview), 
-* hydrological modelling with airGR, 
-* Exploratory Data Analysis including flow duration curve and trend analysis on time-series
-
-
-### slides
-Slides will be linked here sometime.
-
-
-### resources
-* [R-Resources for Hyrology](http://abouthydrology.blogspot.co.uk/2012/08/r-resources-for-hydrologists.html) - A huge list of R-resources about hydrology
-* [hdtools](https://ropensci.github.io/hddtools/) - An R package, which facilitates access to a variety of online open data sources relevant for hydrologists
-* [airGR](https://cran.r-project.org/web/packages/airGR/vignettes/airGR.html) - The description of the airGR package
-* [R-weekly](https://rweekly.org/) - A weekly newsletter about all things R
-* [Rbloggers](https://www.r-bloggers.com/) - A blog aggregator about R
-* [Shiny](https://shiny.rstudio.com/) - The web application framework for R/Rstudio
-* [Rmarkdown](http://rmarkdown.rstudio.com/) - The document/notebook generation framework for R/Rstudio
-* [Github guides](https://guides.github.com/) - Introduction to gitHUB
-* [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
 
