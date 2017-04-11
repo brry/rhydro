@@ -4,6 +4,7 @@
 checkpcfun <- function(...) # to keep everything within a function environment
 {
 link <- " Visit \nbrowseURL('https://github.com/brry/rhydro#install')\n"
+rerun <- "\nAfterwards, rerun   source('https://raw.githubusercontent.com/brry/rhydro/master/checkpc.R')"
 
 message("* Checking R version and Rstudio...")
 # R version
@@ -22,21 +23,22 @@ message("* Checking whether needed packages are installed...")
 p <- "OSMscale"
 if(!requireNamespace(p, quietly=TRUE)) stop("package '", p, "' is not installed. ",
    "Please run \ninstall.packages('",p,"')\nIf that fails, read the instructions at ",
-   "\nhttps://github.com/brry/OSMscale#installation", call.=FALSE)
+   "\nhttps://github.com/brry/OSMscale#installation", rerun, call.=FALSE)
 
 if(Sys.info()["sysname"]=="Linux")
 {
 p <- "sf"
 if(!requireNamespace(p, quietly=TRUE)) stop("package '", p, "' is not installed. ",
    "Please run \ninstall.packages('",p,"')\nIf that fails, read the instructions at ",
-   "\nhttps://github.com/brry/rhydro#packages", call.=FALSE)
+   "\nhttps://github.com/brry/rhydro#packages", rerun, call.=FALSE)
 }
 rm(p)
 
-packs <- c("hydroGOF","airGR","leaflet","rgdal","mapview","sf","OSMscale")
+packs <- c("hydroGOF","airGR","leaflet","rgdal","mapview","sf","OSMscale","dygraphs")
 inst <- sapply(packs, function(p) requireNamespace(p, quietly=TRUE) )
 if(any(!inst)) stop("You need to install some packages for the course. Please run\n",
-                    "install.packages(c('",paste0(packs[!inst],collapse="','"),"'))", call.=FALSE)
+                    "install.packages(c('",paste0(packs[!inst],collapse="','"),"'))",
+                    rerun, call.=FALSE)
 
 message("* Checking package versions, please wait ca 1-5 seconds...")
 cranpacks <- available.packages()

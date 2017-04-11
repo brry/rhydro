@@ -9,8 +9,10 @@
 
 ### course
 Using R in Hydrology - [EGU2017 Short Course](http://meetingorganizer.copernicus.org/EGU2017/session/25731) by YHS  
-Organized by Berry Boessenkool, PhD student at Potsdam University (Germany)  
-__To reserve a seat, please register via berry-b@gmx.de__  (10 registered so far, 2017-04-08).
+Instructors: Shaun Harrigan, Katie Smith, Berry Boessenkool and Daniel Klotz  
+Organizer: Berry Boessenkool, PhD student at Potsdam University (Germany)  
+
+__To reserve a seat, please register via berry-b@gmx.de__  (11 registered so far, 2017-04-11).
 
 Participants are invited to post and discuss questions in the 
 [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
@@ -29,9 +31,14 @@ This will give you a confirmation message if everything is fine and give instruc
 
 
 ### topics
-* using R as GIS (rainfall shapefile, Kriging, sf, leaflet, mapview)
-* river discharge time-series visualisation and extreme value statistics
-* hydrological modelling with airGR
+This course is directed primarily at hydrologists interested in using R for their research.
+You will get (a) an impression of how powerful R is as a tool and (b) all the code to get started yourself.
+The following topics will be covered:
+
+* Good coding practice, report generation (Rstudio, `rmarkdown`, R notebook)
+* Using R as GIS (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)
+* River discharge time-series visualisation and extreme value statistics (`animation` + `extremeStat`)
+* Hydrological modelling with `airGR`
 * Exploratory Data Analysis including flow duration curve and trend analysis on time-series
 
 
