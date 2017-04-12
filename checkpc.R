@@ -34,7 +34,7 @@ if(!requireNamespace(p, quietly=TRUE)) stop("package '", p, "' is not installed.
 }
 rm(p)
 
-packs <- c("hydroGOF","airGR","leaflet","rgdal","mapview","sf","OSMscale","dygraphs")
+packs <- c("hydroGOF","airGR","leaflet","rgdal","mapview","sf","OSMscale","dygraphs","extremeStat")
 inst <- sapply(packs, function(p) requireNamespace(p, quietly=TRUE) )
 if(any(!inst)) stop("You need to install some packages for the course. Please run\n",
                     "install.packages(c('",paste0(packs[!inst],collapse="','"),"'))",
