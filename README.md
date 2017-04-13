@@ -74,10 +74,7 @@ sudo apt-get update
 sudo apt-get install r-base r-base-dev
 ```
 Replace `xenial` with e.g. `trusty` if you have another Ubuntu version:  
-Ubuntu 16.10 yakkety  
-Ubuntu 16.04 xenial  
-Ubuntu 14.04 trusty  
-Ubuntu 12.04 precise  
+16.10 yakkety, 16.04 xenial, 14.04 trusty, 12.04 precise
 
 ### packages
 
