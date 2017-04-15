@@ -1,0 +1,112 @@
+---
+title: "Using R in hydrology (EGU2017 short course)"
+output: 
+  html_notebook: 
+    code_folding: none
+---
+
+These slides and all other course material can be found at  
+
+# [github.com/brry/rhydro](https://github.com/brry/rhydro)
+
+This is an [R Markdown Notebook](http://rmarkdown.rstudio.com/r_notebooks.html).
+
+For discussions, please visit the 
+[Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
+
+\
+
+**Contents of this workshop**
+
+* [Good coding practice, report generation](#report) (Rstudio, `rmarkdown`, R notebook)
+* [Using R as GIS](#gis) (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)
+* [River discharge time-series](#discharge) visualisation and extreme value statistics (`animation` + `extremeStat`)
+* [Hydrological modelling](#hydmod) with `airGR`
+* [Exploratory Data Analysis](#eda) including flow duration curve and trend analysis on time-series
+
+\
+[top](#top)
+
+# report
+Good coding practice, [report generation](#report) (Rstudio, `rmarkdown`, R notebook)  
+**Daniel Kotz**
+
+\
+[top](#top)
+
+# gis
+Using R as GIS (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)  
+**Berry Boessenkool**
+
+### shapefiles
+
+Reading shapefiles with `maptools::readShapeSpatial` and `rgdal::readOGR` is obsolete.  
+Instead, use `sf::st_read`. `sf` is on CRAN since oct 2016.
+
+```{r}
+rain <- sf::st_read("data/PrecBrandenburg/niederschlag.shp")
+centroids <- sf::st_centroid(rain)
+centroids <- sf::st_coordinates(centroids)
+```
+
+[top](#top)
+
+### Plotting, maps
+
+Static plot:
+```{r}
+plot(rain[,1])
+```
+
+Static map:
+```{r}
+prj <- sf::st_crs(rain)$proj4string
+centroids <- as.data.frame(centroids)
+cent_ll <- OSMscale::projectPoints(Y,X, data=centroids, to=OSMscale::pll(), from=prj)
+map_static <- OSMscale::pointsMap(y,x, cent_ll, fx=0.08, type="maptoolkit-topo", zoom=6)
+```
+
+Interactive map:
+```{r}
+library(leaflet)
+cent_ll$info <- paste0(sample(letters,nrow(cent_ll),TRUE), ", ", round(cent_ll$x,2), 
+                       ", ", round(cent_ll$y,2))
+leaflet(cent_ll) %>% addTiles() %>% addCircleMarkers(lng=~x, lat=~y, popup=~info)
+```
+
+Interactive map of shapefile:
+```{r}
+# devtools::install_github("environmentalinformatics-marburg/mapview", ref = "develop")
+library(berryFunctions) # classify, seqPal
+col <- seqPal(n=100, colors=c("red","yellow","blue"))[classify(rain$P1)$index]
+mapview::mapview(rain, col.regions=col)
+```
+
+[top](#top)
+
+### Kriging
+
+
+\
+[top](#top)
+
+# discharge
+River discharge time-series visualisation and extreme value statistics (`animation` + `extremeStat`)  
+**Berry Boessenkool**
+
+\
+[top](#top)
+
+# hydmod
+Hydrological modelling with `airGR`   
+**Katie Smith**
+
+\
+[top](#top)
+
+# eda
+Exploratory Data Analysis including flow duration curve and trend analysis on time-series   
+**Shaun Harrigan**
+
+\
+[top](#top)

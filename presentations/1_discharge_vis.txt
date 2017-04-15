@@ -7,3 +7,7 @@ Dataset from <http://nrfa.ceh.ac.uk/data/station/meanflow/39072>
 3. Create a movie with the package `animation` that shows one year per frame and moves day by day.
 You can use `berryFunctions::monthAxis(ym=TRUE)` for nice axis labeling.
 
+
+http://blog.revolutionanalytics.com/2017/03/htmlwidgets-gallery.html
+
+
