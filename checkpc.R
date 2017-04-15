@@ -3,63 +3,79 @@
 
 checkpcfun <- function(...) # to keep everything within a function environment
 {
-link <- " Visit \nbrowseURL('https://github.com/brry/rhydro#install')\n"
-rerun <- "\nAfterwards, rerun   source('https://raw.githubusercontent.com/brry/rhydro/master/checkpc.R')"
+link <- " visit \nbrowseURL('https://github.com/brry/rhydro#install')\n"
+errors <- FALSE # are there significant insufficiencies?
 
-message("* Checking R version and Rstudio...")
+
+# R ----
+
+message("* Checking laptop for the Using R in Hydrology course. This may take a few seconds...\n")
+
 # R version
-if(getRversion() < "3.3") stop("Your ",R.version.string, " is too old for the course.", link, call.=FALSE)
+if(getRversion() < "3.3") 
+ {
+ errors <- TRUE
+ message("Your ",R.version.string, " is too old for the course. Please", link)
+ }
 
-if(getRversion() < "3.3.2") message("Note: Your ",R.version.string, " is outdated. ", 
-                                    "The current version is 3.3.2 (2016-10-31).",link)
+if(!errors) if(getRversion() < "3.3.3") message("Note: your ", R.version.string, 
+             " is outdated. The current version is 3.3.3 (2017-03-06). Please",link)
+
 # Rstudio
-if(!"tools:rstudio" %in% search()) message("Note: you are not using Rstudio. Strongly recommended!", link)
+if(!"tools:rstudio" %in% search()) message("Note: you are not using Rstudio. Strongly recommended! Please", link)
 
 
-# Packages ---
 
-message("* Checking whether needed packages are installed...")
+# Packages installed ----
 
-p <- "OSMscale"
-if(!requireNamespace(p, quietly=TRUE)) stop("package '", p, "' is not installed. ",
-   "Please run \ninstall.packages('",p,"')\nIf that fails, read the instructions at ",
-   "\nhttps://github.com/brry/OSMscale#installation", rerun, call.=FALSE)
-
-if(Sys.info()["sysname"]=="Linux")
-{
-p <- "sf"
-if(!requireNamespace(p, quietly=TRUE)) stop("package '", p, "' is not installed. ",
-   "Please run \ninstall.packages('",p,"')\nIf that fails, read the instructions at ",
-   "\nhttps://github.com/brry/rhydro#packages", rerun, call.=FALSE)
-}
-rm(p)
+osm <- FALSE
+if(!requireNamespace("OSMscale", quietly=TRUE)) {errors <- TRUE ; osm <- TRUE}
+sf <- FALSE
+if(!requireNamespace("sf", quietly=TRUE)) {errors <- TRUE ; sf <- TRUE}
 
 packs <- c("hydroGOF","airGR","leaflet","rgdal","mapview","sf","OSMscale","dygraphs","extremeStat")
 inst <- sapply(packs, function(p) requireNamespace(p, quietly=TRUE) )
-if(any(!inst)) stop("You need to install some packages for the course. Please run\n",
-                    "install.packages(c('",paste0(packs[!inst],collapse="','"),"'))",
-                    rerun, call.=FALSE)
+if(any(!inst)) errors <- TRUE
 
-message("* Checking package versions, please wait ca 1-5 seconds...")
-cranpacks <- available.packages()
-outdated <- sapply(packs, function(p) 
+packs2get <- packs[!inst]
+
+                   
+                   
+# Package versions ----
+
+if(packageVersion("mapview") < "1.2.68")
   {
-  cranv <- cranpacks[p,]["Version"]
-  packv <- packageVersion(p)
-  if(packv<cranv) message("Note: package '",p,"' (",packv,") is not up to date ",
-                           "(CRAN version is ",cranv,").")
-  packv<cranv 
-  })
-if(any(outdated)) message("You can run \ninstall.packages(c('",
-                          paste0(packs[outdated],collapse="','"),"'))")
-# unload packages again:
-##dummy <- sapply(packs, function(p) try(unloadNamespace(p), silent=TRUE))
+  errors <- TRUE
+  message("The installed version of package 'mapview' is too old. Please run:")
+  cat(if(!requireNamespace("devtools", quietly=TRUE)) "install.packages('devtools'); ",
+  "devtools::install_github('environmentalinformatics-marburg/mapview', ref='develop')\n", sep="")
+  }
+
+cranpacks <- available.packages()
+packs <- packs[inst]
+outdated <- sapply(packs, function(p) packageVersion(p) < cranpacks[p,]["Version"])
+if(any(outdated)) errors <- TRUE
+packs2get <- c(packs2get, packs[outdated])
 
 
-# Success:
-message("\n* There have been no errors, thus you should be all set to go.\n",
+# Output message ----
+
+if(length(packs2get)>0) {message("You need to install/update some packages ",
+          "for the course. Please run:")
+          cat("install.packages(c('",paste0(packs2get, collapse="','"),"'))\n", sep="")}
+if(osm) message("If OSMscale installation fails, read the instructions at ",
+          "\nhttps://github.com/brry/OSMscale#installation")
+if(sf & Sys.info()["sysname"]=="Linux")
+          message("If sf installation fails, read the instructions at ",
+          "\nhttps://github.com/brry/rhydro#packages")
+if(errors){message("Afterwards, rerun:")
+          cat("source('https://raw.githubusercontent.com/brry/rhydro/master/checkpc.R')\n")
+          message("Please report if something in these instructions is not working via  berry-b@gmx.de")}
+
+if(!errors)
+message("Your system is ready for the course!\n",
         "We're looking forward to seeing you at EGU on Monday at 15:30 in Room -2.31.\n",
-        "If not already done, please register via berry-b@gmx.de\n",
+        "If not already done, please register via  berry-b@gmx.de\n",
         "Please do not forget your laptop and come early, if possible.\n",
         "If you want to refresh your basic R skills, you can", link)
 
