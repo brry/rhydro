@@ -3,16 +3,16 @@ title: "Using R in hydrology (EGU2017 short course)"
 output: 
   html_notebook: 
     code_folding: none
+    toc: yes
 ---
 
 These slides and all other course material can be found at  
+<font size="6">[github.com/brry/rhydro](https://github.com/brry/rhydro)</font> 
 
-# [github.com/brry/rhydro](https://github.com/brry/rhydro)
-
-This is an [R Markdown Notebook](http://rmarkdown.rstudio.com/r_notebooks.html).
-
+This is an [R Markdown Notebook](http://rmarkdown.rstudio.com/r_notebooks.html).  
 For discussions, please visit the 
-[Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
+[Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/).  
+Before running the code blocks below, get [package installation instructions](https://github.com/brry/rhydro#check).
 
 \
 
@@ -27,21 +27,24 @@ For discussions, please visit the
 \
 [top](#top)
 
-# report
+# Report
 Good coding practice, [report generation](#report) (Rstudio, `rmarkdown`, R notebook)  
 **Daniel Kotz**
 
 \
 [top](#top)
 
-# gis
+# GIS
 Using R as GIS (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)  
 **Berry Boessenkool**
 
-### shapefiles
+### Shapefiles
 
 Reading shapefiles with `maptools::readShapeSpatial` and `rgdal::readOGR` is obsolete.  
-Instead, use `sf::st_read`. `sf` is on CRAN since oct 2016.
+Instead, use `sf::st_read`. `sf` is on CRAN since oct 2016.  
+Main reaction when using sf: "Wow, that is fast!"  
+[Download the shapefile](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/brry/rhydro/tree/master/presentations/data/PrecBrandenburg) 
+or better: [download the whole github course repository](https://github.com/brry/rhydro/archive/master.zip)
 
 ```{r}
 rain <- sf::st_read("data/PrecBrandenburg/niederschlag.shp")
@@ -90,21 +93,21 @@ mapview::mapview(rain, col.regions=col)
 \
 [top](#top)
 
-# discharge
+# Discharge
 River discharge time-series visualisation and extreme value statistics (`animation` + `extremeStat`)  
 **Berry Boessenkool**
 
 \
 [top](#top)
 
-# hydmod
+# Hydmod
 Hydrological modelling with `airGR`   
 **Katie Smith**
 
 \
 [top](#top)
 
-# eda
+# EDA
 Exploratory Data Analysis including flow duration curve and trend analysis on time-series   
 **Shaun Harrigan**
 
