@@ -42,14 +42,19 @@ packs2get <- packs[!inst]
                    
                    
 # Package versions ----
-
-if(packageVersion("mapview") < "1.2.68")
+mapv <- "mapview" %in% packs2get
+if(!mapv) if(packageVersion("mapview") < "1.2.68") mapv <- TRUE
+if(mapv)
   {
   errors <- TRUE
-  message("The installed version of package 'mapview' is too old. Please run:")
+  if("mapview" %in% packs2get)
+     message("The installed version of package 'mapview' is too old. Please run:")
+  else
+     message("The package 'mapview' must be installed from github. Please run:")
   cat(if(!requireNamespace("devtools", quietly=TRUE)) "install.packages('devtools'); ",
   "devtools::install_github('environmentalinformatics-marburg/mapview', ref='develop')\n", sep="")
-  }
+}
+packs2get <- packs2get[packs2get!="mapview"]
 
 cranpacks <- available.packages()
 packs <- packs[inst]
