@@ -33,7 +33,9 @@ if(!requireNamespace("OSMscale", quietly=TRUE)) {errors <- TRUE ; osm <- TRUE}
 sf <- FALSE
 if(!requireNamespace("sf", quietly=TRUE)) {errors <- TRUE ; sf <- TRUE}
 
-packs <- c("hydroGOF","airGR","leaflet","rgdal","mapview","sf","OSMscale","dygraphs","extremeStat")
+packs <- c("hydroGOF","airGR","leaflet","rgdal","mapview",
+           "sf","OSMscale","dygraphs","extremeStat", 
+           "xts", "trend", "Kendall", "hydroTSM") 
 inst <- sapply(packs, function(p) requireNamespace(p, quietly=TRUE) )
 if(any(!inst)) errors <- TRUE
 
