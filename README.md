@@ -12,7 +12,7 @@ Using R in Hydrology - [EGU2017 Short Course](http://meetingorganizer.copernicus
 Instructors: Shaun Harrigan, Katie Smith, Berry Boessenkool and Daniel Klotz  
 Organizer: Berry Boessenkool, PhD student at Potsdam University (Germany)  
 
-__To reserve a seat, please register via berry-b@gmx.de__  (11 registered so far, 2017-04-11).
+__To reserve a seat, please register via berry-b@gmx.de__  (12 registered so far, 2017-04-19).
 
 Participants are invited to post and discuss questions in the 
 [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
@@ -28,6 +28,7 @@ You can check if your laptop is prepared for the course by running the
 source("https://raw.githubusercontent.com/brry/rhydro/master/checkpc.R")
 ```
 This will give you a confirmation message if everything is fine and give instructions otherwise.
+If you ran this before April 19th, please run it again (we have added more R packages).
 
 
 ### topics
@@ -43,7 +44,13 @@ The following topics will be covered:
 
 
 ### slides
-Slides will be linked here once they are uploaded.
+You can `rightclick - Save as` the 
+[notebook draft](https://github.com/brry/rhydro/blob/master/presentations/rhydro.nb.html)
+and then open the html document in a regular browser.
+Please note that we're still working on the slides, so they are not complete yet.
+
+To get all the material including the datasets and presentation source code, we recommend to
+[download the whole github course repository](https://github.com/brry/rhydro/archive/master.zip).
 
 
 ### resources
