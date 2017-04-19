@@ -6,17 +6,35 @@ output:
     toc: yes
 ---
 
-These slides and all other course material can be found at  
+These slides and all other course materials can be found at  
 <font size="6">[github.com/brry/rhydro](https://github.com/brry/rhydro)</font> 
+<font size="4">#slides</font>   
+To get all the material including the datasets and presentation source code, we recommend to
+[download the whole github course repository](https://github.com/brry/rhydro/archive/master.zip).
 
 This is an [R Markdown Notebook](http://rmarkdown.rstudio.com/r_notebooks.html).  
 For discussions, please visit the 
 [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/).  
-Before running the code blocks below, get [package installation instructions](https://github.com/brry/rhydro#check).
+Before running the code blocks below, we suggest to get package installation instructions by running:
+```R
+source("https://raw.githubusercontent.com/brry/rhydro/master/checkpc.R")
+```
 
 \
 
-**Contents of this workshop**
+**Aim and contents of this workshop**
+
+We want to:  
+
+* Show off how awesome R is for hydrology (it's R-some!^^)  
+* Convince you to start or continue using R  
+* Provide all the code for you as a starting point
+
+We can not:  
+
+* Teach you actual R coding (90 mins is too short for a tutorial)
+
+We have prepared:
 
 * [Good coding practice, report generation](#report) (Rstudio, `rmarkdown`, R notebook)
 * [Using R as GIS](#gis) (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)
@@ -24,12 +42,18 @@ Before running the code blocks below, get [package installation instructions](ht
 * [Hydrological modelling](#hydmod) with `airGR`
 * [Exploratory Data Analysis](#eda) including flow duration curve and trend analysis on time-series
 
+\ 
+
+Before we get started, please let us know your current R knowledge level by filling out the short survey at  
+<font size="6">[bit.ly/knowR](https://bit.ly/knowR)</font> 
+
 \
+
 [top](#top)
 
 # Report
 Good coding practice, [report generation](#report) (Rstudio, `rmarkdown`, R notebook)  
-**Daniel Kotz**
+**Daniel Klotz**
 
 \
 [top](#top)
@@ -89,6 +113,56 @@ mapview::mapview(rain, col.regions=col)
 
 ### Kriging
 
+Plot original points colored by third dimension:
+```{r}
+pcol <- colorRampPalette(c("red","yellow","blue"))(50)
+x <- centroids$X # use cent_ll$x for projected data
+y <- centroids$Y
+berryFunctions::colPoints(x, y, rain$P1, add=FALSE, col=pcol)
+```
+
+Calculate the variogram and fit a semivariance curve
+```{r}
+library(geoR)
+geoprec <- as.geodata(cbind(x,y,rain$P1))
+vario <- variog(geoprec, max.dist=130000) # other maxdist for lat-lon data
+fit <- variofit(vario)
+plot(vario)
+lines(fit)
+```
+
+Determine a useful resolution 
+(keep in mind that computing time rises exponentially with grid size)
+```{r}
+# distance to closest other point:
+d <- sapply(1:length(x), function(i)
+            min(berryFunctions::distance(x[i], y[i], x[-i], y[-i])) )
+# for lat-long data use (2017-Apr only available in github version of OSMscale)
+# d <- OSMscale::maxEarthDist(y,x, data=cent_ll, fun=min)
+hist(d/1000, breaks=20, main="distance to closest gauge [km]")
+mean(d/1000) # 8 km
+```
+
+Perform kriging on a grid with that resolution 
+```{r}
+res <- 1000 # 1 km, since stations are 8 km apart on average
+grid <- expand.grid(seq(min(x),max(x),res),
+                    seq(min(y),max(y),res))
+krico <- krige.control(type.krige="OK", obj.model=fit)
+#krobj <- krige.conv(geoprec, loc=grid, krige=krico)
+#save(krobj, file="data/krobj.Rdata")
+load("data/krobj.Rdata") # line above is too slow for recreation each time
+```
+
+Plot the interpolated values with \rcode{image} or an equivalent 
+(see [Rclick](https://github.com/brry/rclick) 4.15) and add contour lines.
+```{r}
+par(mar=c(0,3,0,3))
+geoR:::image.kriging(krobj, col=pcol)
+colPoints(x, y, rain$P1, col=pcol, legargs=list(horiz=F, title="Prec",y1=0.1,x1=0.9))
+points(x,y)
+plot(rain, col=NA, add=TRUE)
+```
 
 \
 [top](#top)
@@ -113,3 +187,13 @@ Exploratory Data Analysis including flow duration curve and trend analysis on ti
 
 \
 [top](#top)
+
+
+# Discussion
+
+Please give us feedback at
+<font size="6">[bit.ly/judgeR](https://bit.ly/judgeR)</font> 
+
+For discussions, please use the 
+[Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/).  
+
