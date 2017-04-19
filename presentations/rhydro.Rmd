@@ -192,7 +192,7 @@ Exploratory Data Analysis including flow duration curve and trend analysis on ti
 # Discussion
 
 Please give us feedback at
-<font size="6">[bit.ly/judgeR](https://bit.ly/judgeR)</font> 
+<font size="6">[bit.ly/feedbackR](https://bit.ly/feedbackR)</font> 
 
 For discussions, please use the 
 [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/).  
