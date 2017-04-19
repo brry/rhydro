@@ -45,7 +45,7 @@ The following topics will be covered:
 
 ### slides
 You can `rightclick - Save as` the 
-[notebook draft](https://github.com/brry/rhydro/blob/master/presentations/rhydro.nb.html)
+[notebook draft](https://github.com/brry/rhydro/raw/master/presentations/rhydro.nb.html)
 and then open the html document in a regular browser.
 Please note that we're still working on the slides, so they are not complete yet.
 
