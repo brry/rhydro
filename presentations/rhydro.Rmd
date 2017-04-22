@@ -217,15 +217,15 @@ document:
 ### Blogs (hugo)
 [![hugo](daniel/examples/blogs_hugo1.png)](https://bookdown.org/yihui/blogdown/)
 
+#### Presentations
+[![bookdown1](daniel/examples/presentations_1.png)](http://rmarkdown.rstudio.com/revealjs_presentation_format.html)
+
 #### Widgets 
 [![cran-gauge](daniel/examples/widgets_1.png)](https://gallery.shinyapps.io/cran-gauge/)
 [![superzip](daniel/examples/widgets_2.png)](https://shiny.rstudio.com/gallery/superzip-example.html)
 
-#### Presentations
-[![bookdown1](daniel/examples/presentations_1.png)](http://rmarkdown.rstudio.com/revealjs_presentation_format.html)
-
 #### Apps (Shiny) 
-[![shiny](daniel/examples/shiny_1.png)](https://shiny.rstudio.com/)
+[![shiny](daniel/examples/shiny_1.jpeg)](http://rmarkdown.rstudio.com/authoring_shiny.html)
 [![shiny2](daniel/examples/shiny_2_gallery.png)](https://shiny.rstudio.com/gallery/superzip-example.html)
 
 
