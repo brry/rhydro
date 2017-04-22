@@ -1,14 +1,14 @@
 ---
 title: "Rhydro"
 output:
-  html_notebook:
-    code_folding: none
-    toc: yes
   html_document:
     toc: yes
     toc_depth: 4
     toc_float:
       collapsed: no
+  html_notebook:
+    code_folding: none
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -17,7 +17,7 @@ if (knitr:::is_html_output()) {
 }
 ```
 
-<font size="6">Using R in hydrology (EGU2017 short course)</font>   
+# Using R in hydrology (EGU2017 short course)
 
 *Instructors*: Shaun Harrigan, Katie Smith, Berry Boessenkool and Daniel Klotz  
 *Organizer*: Berry Boessenkool, PhD student at Potsdam University (Germany)  
