@@ -12,7 +12,9 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(eval = FALSE)
+if (knitr:::is_html_output()) {
+  knitr::opts_chunk$set(eval = FALSE)
+}
 ```
 
 # Using R in hydrology (EGU2017 short course)
@@ -275,8 +277,10 @@ leaflet(cent_ll) %>% addTiles() %>% addCircleMarkers(lng=~x, lat=~y, popup=~info
 
 Interactive map of shapefile:
 ```{r}
-# devtools::install_github("environmentalinformatics-marburg/mapview", ref = "develop")
+# make sure to have installed the development version of mapview: 
+  # devtools::install_github("environmentalinformatics-marburg/mapview", ref = "develop")
 library(berryFunctions) # classify, seqPal
+library(mapview)
 col <- seqPal(n=100, colors=c("red","yellow","blue"))[classify(rain$P1)$index]
 mapview::mapview(rain, col.regions=col)
 ```
