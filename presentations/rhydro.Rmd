@@ -1,14 +1,27 @@
 ---
-title: "Using R in hydrology (EGU2017 short course)"
-output: 
-  html_notebook: 
+title: "Rhydro"
+output:
+  html_notebook:
     code_folding: none
     toc: yes
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: no
 ---
 
-These slides and all other course materials can be found at  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+# Using R in hydrology (EGU2017 short course)
+
+These slides and all other course materials can be found at:
+
 <font size="6">[github.com/brry/rhydro](https://github.com/brry/rhydro)</font> 
 <font size="4">#slides</font>   
+
 To get all the material including the datasets and presentation source code, we recommend to
 [download the whole github course repository](https://github.com/brry/rhydro/archive/master.zip).
 
@@ -54,6 +67,165 @@ Before we get started, please let us know your current R knowledge level by fill
 # Report
 Good coding practice, [report generation](#report) (Rstudio, `rmarkdown`, R notebook)  
 **Daniel Klotz**
+
+## Introduction
+
+![goals](daniel/intro/goals.jpeg)
+
+### Why I use R
+
+Why I did not use: 
+
+![equals](daniel/intro/equals.jpeg)
+
+
+Whats great about R: 
+```{r}
+  library(ggplot2)
+  test_data <- mpg
+  test_plot <- ggplot(test_data, aes(displ, hwy, colour = class)) + 
+    geom_point()
+  test_plot
+```
+
+Why I decided to use R: 
+
+![pipe](daniel/intro/magrittr.jpeg)
+
+Previously:
+```{r}
+  aggregation_function <- function(x) {
+    round(mean(x),2)
+  }
+  mtcars_subset <- subset(mtcars,hp > 100)
+  mtcars_aggregated <- aggregate(. ~ cyl, data = mtcars_subset, FUN = aggregation_function)
+  car_data1 <- transform(mtcars_aggregated, kpl = mpg*0.4251)
+  print(car_data1)
+```
+
+Now:
+```{r}
+library(magrittr)
+car_data2 <- 
+  mtcars %>%
+  subset(hp > 100) %>%
+  aggregate(. ~ cyl, data = ., FUN = . %>% mean %>% round(2)) %>%
+  transform(kpl = mpg %>% multiply_by(0.4251)) %>%
+  print
+```
+
+
+**btw:**
+You can integrate other programming languages with ease. Here an example from 
+[Yihui Xie](https://yihui.name/knitr/demo/engines/) for the use of `Fortran` 
+in Rmarkdown:
+
+1. Compile Code:
+    ```{r compfort, engine='fortran', results='hide', eval=FALSE}
+    C Fortran test
+          subroutine fexp(n, x)
+          double precision x
+    C  output
+          integer n, i
+    C  input value
+          do 10 i=1,n
+             x=dexp(dcos(dsin(dble(float(i)))))
+      10  continue
+          return
+          end
+    ```
+
+2. Run Code:
+    ```{r testfort, collapse=TRUE, eval = FALSE}
+    res = .Fortran("fexp", n=100000L, x=0)
+    str(res)
+    ```
+
+Be happy with the result: 
+>     `## List of 2`
+>     `##  $ n: int 100000`
+>     `##  $ x: num 2.72`
+
+---
+
+## Markdown 
+HT**M**L: HyperText **Markdown** Language
+
+John Gruber:
+
+[![John Gruber](daniel/intro/John_Gruber_wiki.jpeg)](https://en.wikipedia.org/wiki/John_Gruber)
+
+
+Comparison: Markdown vs. Latex 
+[![Comparison](daniel/intro/yihui_latex-vs-markdown.png)](https://youtu.be/2yvW0O_7xOg)
+
+
+Rstudio provides cheat-sheets with the most important informations about many 
+of their "favorite" packages & software:
+
+[![Cheat Sheet](daniel/intro/Rmarkdown_cheatsheet.png)](https://www.rstudio.com/resources/cheatsheets/)
+
+# Rmarkdown
+In Rstudio: 
+
+<div align="center">
+  <img width="600px" src="daniel/reports/Rmark1.png" alt="Rmark1" />
+</div>
+
+<div align="center">
+  <img width="600px" src="daniel/reports/Rmark2.png" alt="Rmark2" />
+</div>
+
+<div align="center">
+  <img width="600px" src="daniel/reports/Rmark3.png" alt="Rmark2" />
+</div>
+
+"Native" Formats:
+
+- [html](daniel/show/Rmark.html) 
+- [pdf](daniel/show/Rmark.pdf) 
+- [word](daniel/show/Rmark.docs)
+
+Much more possible if you adress pandoc directly: 
+[![pandoc](daniel/reports/pandoc_diagram.jpg)](http://pandoc.org/)
+
+Information in the text can be automatically updated with the rest of the 
+document:
+[![time for coffee](daniel/reports/coffee.png)
+
+### Examples
+
+#### Small Websites
+<div align="center">
+  <a href = "http://rstudio.github.io/tufte/">
+    <img width="600px" src="daniel/examples/sw_tufte.png" alt="Cayman Theme" />
+  </a>
+</div>
+
+<div align="center">
+  <a href = "http://yixuan.cos.name/prettydoc/cayman.html">
+    <img width="600px" src="daniel/examples/sw_cayman.png" alt="Cayman Theme" />
+  </a>
+</div>
+
+#### Books (blogdown)
+[![bookdown1](daniel/examples/bookdown_1.png)](https://bookdown.org/)
+[![bookdown2](daniel/examples/bookdown_2.png)](https://bookdown.org/)
+
+### Blogs (hugo)
+[![hugo](daniel/examples/blogs_hugo1.png)](https://bookdown.org/yihui/blogdown/)
+
+#### Widgets 
+[![cran-gauge](daniel/examples/widgets_1.png)](https://gallery.shinyapps.io/cran-gauge/)
+[![superzip](daniel/examples/widgets_2.png)](https://shiny.rstudio.com/gallery/superzip-example.html)
+
+#### Presentations
+[![bookdown1](daniel/examples/presentations_1.png)](http://rmarkdown.rstudio.com/revealjs_presentation_format.html)
+
+#### Apps (Shiny) 
+[![shiny](daniel/examples/shiny_1.png)](https://shiny.rstudio.com/)
+[![shiny2](daniel/examples/shiny_2_gallery.png)](https://shiny.rstudio.com/gallery/superzip-example.html)
+
 
 \
 [top](#top)
