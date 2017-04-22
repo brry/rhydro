@@ -1,14 +1,14 @@
 ---
 title: "Rhydro"
 output:
+  html_notebook:
+    code_folding: none
+    toc: yes
   html_document:
     toc: yes
     toc_depth: 4
     toc_float:
       collapsed: no
-  html_notebook:
-    code_folding: none
-    toc: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -222,11 +222,11 @@ document:
 
 #### Widgets 
 [![cran-gauge](daniel/examples/widgets_1.png)](https://gallery.shinyapps.io/cran-gauge/)
-[![superzip](daniel/examples/widgets_2.png)](https://shiny.rstudio.com/gallery/superzip-example.html)
 
 #### Apps (Shiny) 
 [![shiny](daniel/examples/shiny_1.jpeg)](http://rmarkdown.rstudio.com/authoring_shiny.html)
 [![shiny2](daniel/examples/shiny_2_gallery.png)](https://shiny.rstudio.com/gallery/superzip-example.html)
+![shiny2](daniel/examples/shiny_3_johannes.png)
 
 
 \
