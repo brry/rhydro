@@ -12,7 +12,7 @@ Using R in Hydrology - [EGU2017 Short Course](http://meetingorganizer.copernicus
 Instructors: Shaun Harrigan, Katie Smith, Berry Boessenkool and Daniel Klotz  
 Organizer: Berry Boessenkool, PhD student at Potsdam University (Germany)  
 
-__To reserve a seat, please register via berry-b@gmx.de__  (12 registered so far, 2017-04-19).
+__To reserve a seat, please register via berry-b@gmx.de__  (16 registered so far, 2017-04-21).
 
 Participants are invited to post and discuss questions in the 
 [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
