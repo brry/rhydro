@@ -40,7 +40,7 @@ The following topics will be covered:
 * Using R as GIS (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)
 * River discharge time-series visualisation and extreme value statistics (`animation` + `extremeStat`)
 * Hydrological modelling with `airGR`
-* Exploratory Data Analysis including flow duration curve and trend analysis on time-series
+* Trend Analysis in R (using `trend` + `hydroTSM`)
 
 
 ### slides
