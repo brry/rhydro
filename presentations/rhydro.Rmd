@@ -6,7 +6,7 @@ output:
     toc: yes
   html_document:
     toc: yes
-    toc_depth: 4
+    toc_depth: 3
     toc_float:
       collapsed: no
 ---
@@ -70,15 +70,13 @@ Before we get started, please let us know your current R knowledge level by fill
 Good coding practice, report generation (Rstudio, `rmarkdown`, R notebook)  
 **Daniel Klotz**
 
-### Introduction
+### Why to use R
 
-![goals](daniel/intro/goals.jpeg)
+![](daniel/intro/goals.jpeg)
 
-### Why I use R
+Why I did not use R: 
 
-Why I did not use: 
-
-![equals](daniel/intro/equals.jpeg)
+![](daniel/intro/equals.jpeg)
 
 
 Whats great about R: 
@@ -150,7 +148,7 @@ Be happy with the result:
 
 ---
 
-## Markdown 
+### Markdown 
 HT**M**L: HyperText **Markdown** Language
 
 John Gruber:
@@ -167,7 +165,8 @@ of their "favorite" packages & software:
 
 [![Cheat Sheet](daniel/intro/Rmarkdown_cheatsheet.png)](https://www.rstudio.com/resources/cheatsheets/)
 
-# Rmarkdown
+** Rmarkdown **
+
 In Rstudio: 
 
 <div align="center">
@@ -214,7 +213,7 @@ document:
 [![bookdown1](daniel/examples/bookdown_1.png)](https://bookdown.org/)
 [![bookdown2](daniel/examples/bookdown_2.png)](https://bookdown.org/)
 
-### Blogs (hugo)
+#### Blogs (hugo)
 [![hugo](daniel/examples/blogs_hugo1.png)](https://bookdown.org/yihui/blogdown/)
 
 #### Presentations
