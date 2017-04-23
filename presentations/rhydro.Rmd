@@ -70,7 +70,7 @@ Before we get started, please let us know your current R knowledge level by fill
 Good coding practice, report generation (Rstudio, `rmarkdown`, R notebook)  
 **Daniel Klotz**
 
-## Introduction
+### Introduction
 
 ![goals](daniel/intro/goals.jpeg)
 
@@ -504,7 +504,263 @@ ani.width=7*200, ani.height=5*200)
 
 # Hydmod
 Hydrological modelling with `airGR`   
-**Katie Smith**
+**Katie Smith** (Centre for Ecology & Hydrology) <k.a.smith@ceh.ac.uk>
+
+This is an demonstration of how to use the airGR package of hydrological models in R, as well as how to plot interactive timeseries graphs with the dygraphs package.
+
+First we need to load some packages
+```{r}
+library(xts)
+library(dygraphs)
+library(RColorBrewer)
+```
+
+### Data
+
+Now we'll load in some observational flow data from the River Thames (naturalised) in England - with thanks to the National River Flow Archive: http://nrfa.ceh.ac.uk/data/search
+```{r}
+observed_data <- read.csv("data/Qobs_390010.csv")
+observed_data
+observed_data$DATE <- strptime(observed_data$DATE, format = "%d/%m/%Y")
+```
+
+In order to plot this as an interactive dygraph we need to change it to xts format
+```{r, fig.width=10, fig.height=6}
+observed_data_xts <- as.xts(observed_data$Qobs, order.by = observed_data$DATE)
+dygraph(observed_data_xts, main="Naturalised Streamflow Observations for the Thames at Kingston")%>%
+  dyAxis("y", label="Streamflow (m3/s")%>%
+  dyOptions(colors = RColorBrewer::brewer.pal(3, "Set1")[2])%>%
+  dyRangeSelector()
+```
+Now lets read in some precipitation data - this is from CEH-GEAR: https://data.gov.uk/dataset/gridded-estimates-of-daily-and-monthly-areal-rainfall-for-the-united-kingdom-1890-2012-ceh-gear
+
+```{r}
+precip_data <- read.csv("data/rain_1961_2014_390010.csv")
+precip_data
+```
+and some potential evapotranspiration data - this is from CHESS-PE:https://data.gov.uk/dataset/climate-hydrology-and-ecology-research-support-system-potential-evapotranspiration-dataset-for-1
+
+```{r}
+PET_data <- read.csv("data/CHESS_PET_1961_2015_390010.csv")
+PET_data
+```
+
+Note that our starting dates are not the same as our observational data, so we need to make a dataframe that matches the dates up. There are a lot of ways to do this. First we'll convert them to the same date format.
+```{r}
+precip_data$DATE <- strptime(precip_data$DATE, "%Y-%m-%d")
+PET_data$DATE <- strptime(PET_data$DATE, "%Y-%m-%d")
+```
+now we'll find the common period
+```{r}
+first_date <- max(observed_data$DATE[1], precip_data$DATE[1], PET_data$DATE[1])
+last_date <- min(observed_data$DATE[length(observed_data$DATE)], precip_data$DATE[length(precip_data$DATE)], PET_data$DATE[length(PET_data$DATE)])
+```
+and make a data frame of that length
+```{r}
+# make an empty data frame
+thames_data <- as.data.frame(matrix(NA,nrow=as.numeric((last_date-first_date)+1), ncol=4))
+colnames(thames_data) <-c ("date","PET","precip","obs")
+# make the date timeseries
+thames_data$date <- seq(first_date, last_date, by="days")
+# populate the data frame with the data
+thames_data$obs <- observed_data$Qobs[which(observed_data$DATE==thames_data$date[1]):which(observed_data$DATE==thames_data$date[length(thames_data$date)])]
+thames_data$precip <- precip_data$Mean_rainfall[which(precip_data$DATE==thames_data$date[1]):which(precip_data$DATE==thames_data$date[length(thames_data$date)])]
+thames_data$PET <- PET_data$PET[which(PET_data$DATE==thames_data$date[1]):which(PET_data$DATE==thames_data$date[length(thames_data$date)])]
+```
+
+### Interactive time series plot
+
+plot the observed streamflow with the precipitation data
+```{r, fig.width=10, fig.height=6}
+#  convert the observed discharge to runoff (so its in the same units as the precip)
+# divide by catchment area (m2) and mulitply by 86.4
+thames_data$obs <- (thames_data$obs/9948.0)*86.4
+thames_data_xts <- as.xts(thames_data[,3:4], order.by=thames_data$date)
+# initiate the dygraph
+dygraph(thames_data_xts)%>%
+# define the first axis  
+dyAxis("obs", name = "y", label = "runoff (mm/day)",
+       valueRange = range(thames_data_xts[, "obs"],
+                          na.rm = TRUE)* c(0.01, 1.59))%>%
+# define the second axis
+dyAxis("precip", name = "y2", label = "precip (mm/day)",
+                   valueRange = rev(range(thames_data_xts[, "precip"], 
+                   na.rm = TRUE)* c(0.01, 2.99)))%>%
+# plot the data
+dySeries("obs",axis = 'y')%>%
+dySeries("precip", axis = 'y2', stepPlot = TRUE,
+         fillGraph = TRUE)%>%
+dyOptions(colors = RColorBrewer::brewer.pal(3, "Set1")[2:3])%>%
+dyRangeSelector()
+```
+
+### Hydrological modeling
+
+OK, enough messing with data, lets do some modelling
+
+see this website for a good guide through the model: 
+<https://odelaigue.github.io/airGR/tutorial_1_getting_started.html>
+
+load the GR package
+```{r}
+require(airGR, quietly=TRUE)
+```
+
+prepare the input data in the correct format
+```{r}
+BasinObs <- thames_data
+colnames(BasinObs) <- c('DatesR','E','P', 'Qobs')
+```
+
+create the InputsModel object - this defines which model we want to run, and defines the variables for the models input data
+
+```{r}
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J,DatesR = BasinObs$DatesR,
+                                   Precip = BasinObs$P,PotEvap = BasinObs$E)
+str(InputsModel)
+# note NA values of precip and PET are NOT ALLOWED
+```
+
+create the RunOptions object - this defines options for the RunModel_GR4J function
+```{r}
+# first define the period to run the model over
+Ind_Run <- seq(which(BasinObs$DatesR=="1981-01-01"),
+             which(BasinObs$DatesR=="2014-12-31"))
+RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
+                               InputsModel = InputsModel,
+                               IndPeriod_Run = Ind_Run,
+                               IndPeriod_WarmUp = NULL)
+str(RunOptions)
+```
+
+create the InputsCrit object - define the error metric (choose from RMSE, NSE, KGE or modified KGE (KGE2))
+```{r}
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE,
+                               InputsModel = InputsModel,
+                               RunOptions = RunOptions,
+                               Qobs = BasinObs$Qobs[Ind_Run])
+str(InputsCrit)
+```
+
+create the CalibOptions object - choose the calibration algorithm
+```{r}
+CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J,
+                                   FUN_CALIB = Calibration_Michel)
+str(CalibOptions)
+```
+
+run the calibration
+```{r}
+OutputsCalib <- Calibration_Michel(InputsModel = InputsModel, 
+                                   RunOptions = RunOptions,
+                                   InputsCrit = InputsCrit,
+                                   CalibOptions = CalibOptions,
+                                   FUN_MOD = RunModel_GR4J,
+                                   FUN_CRIT = ErrorCrit_NSE)
+```
+
+NSE of 0.9246 - not bad at all!
+
+define the parameters found by the calibration routine
+```{r}
+Param <- OutputsCalib$ParamFinalR
+Param
+```
+
+**RUN THE MODEL!**
+```{r}
+OutputsModel <- RunModel_GR4J(InputsModel = InputsModel,
+                             RunOptions = RunOptions,
+                             Param= Param)
+str(OutputsModel)
+```
+
+use the inbuilt plot function to look at the results
+```{r}
+plot(OutputsModel, Qobs=BasinObs$Qobs[Ind_Run])
+```
+
+looking good - but we've got some discrepancy at the low flows end. NSE is notorious for this, it is based on the square of the flows, so over-weights the calibration to the high flows. I wonder if the modified KGE can do any better?
+```{r}
+# make a few changes to the calibration criteria
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE2,
+                               InputsModel = InputsModel,
+                               RunOptions = RunOptions,
+                               Qobs = BasinObs$Qobs[Ind_Run])
+# rerun the calibration
+OutputsCalib <- Calibration_Michel(InputsModel = InputsModel, 
+                                   RunOptions = RunOptions,
+                                   InputsCrit = InputsCrit,
+                                   CalibOptions = CalibOptions,
+                                   FUN_MOD = RunModel_GR4J,
+                                   FUN_CRIT = ErrorCrit_KGE2)
+# redefine the parameters
+Param <- OutputsCalib$ParamFinalR
+# rerun the model
+OutputsModel <- RunModel_GR4J(InputsModel = InputsModel,
+                             RunOptions = RunOptions,
+                             Param= Param)
+# plot again
+plot(OutputsModel, Qobs=BasinObs$Qobs[Ind_Run])
+```
+
+not much different. Oh well, we can be happy with either of those metric scores. - pause for thought - which parameter set would you choose to use?!
+
+### Validation
+
+Let's do some validation
+```{r}
+# go back to the beginning, redefine the period to run on (the period we haven't used for calibration, minus the first year needed for warm up)
+Ind_Run <- seq(which(BasinObs$DatesR=="1962-01-01"),
+             which(BasinObs$DatesR=="1980-12-31"))
+RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
+                               InputsModel = InputsModel,
+                               IndPeriod_Run = Ind_Run,
+                               IndPeriod_WarmUp = NULL)
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE2,
+                               InputsModel = InputsModel,
+                               RunOptions = RunOptions,
+                               Qobs = BasinObs$Qobs[Ind_Run])
+Param <- OutputsCalib$ParamFinalR
+OutputsModel <- RunModel_GR4J(InputsModel = InputsModel,
+                             RunOptions = RunOptions,
+                             Param= Param)
+OutputsCrit <- ErrorCrit_KGE2(InputsCrit = InputsCrit, 
+                              OutputsModel = OutputsModel)
+```
+
+slightly worse than the calibration period (0.9621) but not bad at all
+
+finally, let's run the model for the whole time period and plot a dygraph so we can look at the timeseries in more detail
+```{r}
+Ind_Run <- seq(which(BasinObs$DatesR=="1962-01-01"),
+             which(BasinObs$DatesR=="2014-12-31"))
+RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
+                               InputsModel = InputsModel,
+                               IndPeriod_Run = Ind_Run,
+                               IndPeriod_WarmUp = NULL)
+Param <- OutputsCalib$ParamFinalR
+OutputsModel <- RunModel_GR4J(InputsModel = InputsModel,
+                             RunOptions = RunOptions,
+                             Param= Param)
+plot_output_data <- as.data.frame(matrix(NA, ncol = 3,
+                                         nrow = length(OutputsModel$DatesR)))
+colnames(plot_output_data) <- c("Date", "Qsim", "Qobs")
+plot_output_data$Date <- OutputsModel$DatesR
+plot_output_data$Qsim <- OutputsModel$Qsim
+plot_output_data$Qobs <- BasinObs$Qobs[Ind_Run]
+plot_output_data_xts <- as.xts(plot_output_data, order.by = plot_output_data$Date)
+dygraph(plot_output_data_xts, main="Observed and Simulated Runoff for the Thames at Kingston (Naturalised)")%>%
+  dyOptions(colors = RColorBrewer::brewer.pal(3,"Set1")[2:1])%>%
+  dyAxis("y", label="Runoff (mm/day)")%>%
+  dyRangeSelector()
+```
+
+Thanks for listening! Hope you get to try it out.
+
+Any general questions? Please feel free to post them on facebook page: https://www.facebook.com/groups/1130214777123909/?ref=bookmarks
+
+GR specific questions? Email <airGR@irstea.fr>
 
 \
 [top](#top)
