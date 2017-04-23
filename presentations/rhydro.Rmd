@@ -354,17 +354,15 @@ River discharge time-series visualisation and extreme value statistics (`animati
 
 ### Read, plot and aggregate data
 
-Datasets from <http://nrfa.ceh.ac.uk/data/station/meanflow/39072>  
-Download 
-[discharge1](https://github.com/brry/rhydro/tree/master/presentations/data/discharge39072.csv),
-[discharge2_xxx](https://github.com/brry/rhydro/tree/master/presentations/data/discharge.csv), 
-[discharge3_xxx](https://github.com/brry/rhydro/tree/master/presentations/data/discharge.csv), 
+Datasets from the UK National River Flow Archive
+<http://nrfa.ceh.ac.uk/data/station/meanflow/39072>  
+Download [discharge csv](https://github.com/brry/rhydro/tree/master/presentations/data/discharge39072.csv)
 or better: [download the whole github course repository](https://github.com/brry/rhydro/archive/master.zip)
 
 Read and transform data
 ```{r}
 Q <- read.table("data/discharge39072.csv", skip=19, header=TRUE, sep=",", fill=TRUE)[,1:2]
-colnames(Q) <- c("date","Royal_Windsor_Park")
+colnames(Q) <- c("date","discharge")
 Q$date <- as.Date(Q$date, format="%Y-%m-%d")
 ```
 
@@ -395,7 +393,7 @@ dev.off()
 Annual maxima, German hydrological year split at Oct 31
 ```{r}
 Q$hydyear <- as.numeric(format(Q$date+61, "%Y"))
-annmax <- tapply(Q$Royal_Windsor_Park, Q$hydyear, max, na.rm=TRUE)
+annmax <- tapply(Q$discharge, Q$hydyear, max, na.rm=TRUE)
 annmax <- annmax[-1]
 hydyear <- as.numeric(names(annmax)) 
 plot(hydyear, annmax, type="o", las=1)
@@ -419,7 +417,7 @@ plotLextreme(dle, nbest=16, log=TRUE)
 
 Return values (discharge estimates for given return periods)
 ```{r}
-dlf$returnlev
+dle$returnlev
 ```
 In reality, please use non-stationary EVS!
 
@@ -438,37 +436,68 @@ vignette("extremeStat")
 
 ### Animated movie
 
+Download data from several discharge stations
 
-Read data from several discharge stations
+<http://nrfa.ceh.ac.uk/data/search> Filter: River = Thames  
+<http://environment.data.gov.uk/flood-monitoring/doc/reference#stations> for lat-lon coordinates:
+
+```{r, eval=FALSE}
+url <- "http://environment.data.gov.uk/flood-monitoring/id/stations?riverName=Thames"
+json <- jsonlite::fromJSON(url)
+str(json$items, max.level=1)
+metajson <- json$items[,c("label","lat","long","dateOpened")]
+```
+
 ```{r}
-if(FALSE){
-Q2 <- read.table("data/discharge_____.csv", skip=19, header=TRUE, sep=",", fill=TRUE)[,1:2]
-colnames(Q2) <- c("date","dummy1");  Q2$date <- as.Date(Q2$date, format="%Y-%m-%d")
-Q3 <- read.table("data/discharge_____.csv", skip=19, header=TRUE, sep=",", fill=TRUE)[,1:2]
-colnames(Q3) <- c("date","dummy2");  Q3$date <- as.Date(Q3$date, format="%Y-%m-%d")
-}
-Q2 <- Q ; Q2[,2] <- Q2[,2] + 100 ; Q2 <- Q2[-(1:100),]
-Q3 <- Q ; Q3[,2] <- Q3[,2] -  50 ; Q3 <- head(Q3, -365*3)
-colnames(Q2)[2] <- "dummy1"; colnames(Q3)[2] <- "dummy2"
+meta <- read.table(header=T, as.is=T, sep=",", text="
+name                , lat, lon
+Kingston            , 51.415005,-0.308869
+Days_Weir           , 51.638206,-1.179444
+Eynsham             , 51.774692,-1.356854
+West_Mill_Cricklade , 51.646694,-1.865536
+Ewen                , 51.674733,-1.9904
+Royal_Windsor_Park  , 51.485795,-0.589124
+Reading             , 51.461325,-0.967884
+")
+#library(leaflet)
+#leaflet(meta) %>% addTiles() %>% addCircleMarkers(~lon, ~lat, popup=~name)
+map_thames <- OSMscale::pointsMap(lat,lon,meta, fx=1, fy=0.2, plot=FALSE, zoom=6, 
+                           type="maptoolkit-topo", quiet=TRUE)
+```
+
+Read datasets
+
+```{r}
+files <- dir("data", pattern="^Thames_", full=TRUE)
+thames <- lapply(files, function(f) {
+ dis <- read.table(f, skip=19, header=TRUE, sep=",", fill=TRUE)[,1:2]
+ name <- readLines(f, n=5)[5]
+ name <- sub("station,name,Thames at ", "", name)
+ name <- gsub(" ", "_", name)
+ colnames(dis) <- c("date",name)
+ dis$date <- as.Date(dis$date, format="%Y-%m-%d")
+ dis
+})
+rm(files)
 ```
 
 Merge datasets
 ```{r}
-dis <- Reduce(function(...) merge(..., all=T), list(Q,Q2,Q3))
+dis <- Reduce(function(...) merge(..., all=T), thames)
 ```
 
 Code to generate one movie slice
 ```{r}
 library(berryFunctions) # for lim0, monthAxis, textField, etc
 
-scene <- function(i, vlcnote=TRUE, cex=1.2)
+scene <- function(i, vlcnote=TRUE, map=TRUE, cex=1.2)
 {
  sel <- 0:120
  dis2 <- dis[i + sel, ]
- stat <- c("Royal_Windsor_Park", "dummy1", "dummy2")
- col <- c("red", "blue", "orange")
+ stat <- colnames(dis)[-1]
+ col <- RColorBrewer::brewer.pal(ncol(dis)-1, name="Set1")
  names(col) <- stat
- plot(dis2$date,dis2$Royal_Windsor_Park, type="n", ylim=lim0(500),  las=1, 
+ plot(dis2$date,dis2[,2], type="n", ylim=lim0(300),  las=1, 
       xaxt="n", yaxt="n", cex.lab=cex, xlab="", 
       ylab="Discharge  [m\U{00B3}/s]", xaxs="i")
  axis(2, cex.axis=cex, las=1)
@@ -480,24 +509,32 @@ scene <- function(i, vlcnote=TRUE, cex=1.2)
  xi <- head(xi, -1)
  textField(dis2$date[xi], diag(as.matrix(dis2[xi,stat])), stat, cex=cex, col=col)
  box()
+ if(map) berryFunctions::smallPlot(
+    {
+    OpenStreetMap::plot.OpenStreetMap(map_thames, removeMargin=FALSE)
+    pts <- OSMscale::projectPoints(lat,lon,meta, 
+           to=map_thames$tiles[[1]]$projection)
+   points(pts, pch=3, cex=4, lwd=5, col=col)
+   },
+   mar=0, bg=NA, border=NA, x1=0, x2=0.5, y1=0.8, y2=1)
  if(vlcnote) mtext("VLC: 'e': single frame forward\n'SHIFT+LEFT': few seconds back",
                    side=3, line=-9, outer=TRUE, adj=0.95, cex=cex)
 }
 
 par(mar=c(5,5,0.5,0.5), mgp=c(3,0.7,0))
-scene(150)
+scene(47200)
 ```
 
 Actual movie
 ```{r, eval=FALSE}
-library(animation)
+library(animation) ; library(pbapply)
 saveVideo({par(mar=c(6,8,1,1), mgp=c(5.5,0.7,0))
- dummy <- pbsapply(seq(0, by=3, len=50), scene, cex=2); rm(dummy)
+ dummy <- pbsapply(seq(47000, by=3, len=100), scene, cex=2); rm(dummy)
 }, video.name="Qmovie.mp4", interval=0.1, ffmpeg="/usr/bin/ffmpeg", 
 ani.width=7*200, ani.height=5*200)
 ```
 
-[Open video in default mp4player](Qmovie.mp4)
+<a href="Qmovie.mp4">Open video within browser</a>
 
 \
 [top](#top)
