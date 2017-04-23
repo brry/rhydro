@@ -18,8 +18,9 @@ if(getRversion() < "3.3")
  message("Your ",R.version.string, " is too old for the course. Please", link)
  }
 
-if(!errors) if(getRversion() < "3.3.3") message("Note: your ", R.version.string, 
-             " is outdated. The current version is 3.3.3 (2017-03-06). Please",link)
+if(!errors) if(getRversion() < "3.4.0") message("Note: your ", R.version.string, 
+             " is outdated. The current version is 3.4.0 (2017-04-21).\n",
+             "Updating is optional. For instructions, you can", link)
 
 # Rstudio
 if(!"tools:rstudio" %in% search()) message("Note: you are not using Rstudio. Strongly recommended! Please", link)
@@ -85,7 +86,8 @@ message("Your system is ready for the course!\n",
         "We're looking forward to seeing you at EGU on Monday at 15:30 in Room -2.31.\n",
         "If not already done, please register via  berry-b@gmx.de\n",
         "Please do not forget your laptop and come early, if possible.\n",
-        "If you want to refresh your basic R skills, you can", link)
+        "If you want to refresh your basic R skills, you can visit\n",
+        "browseURL('https://github.com/brry/rhydro#r-intro')")
 
 }
 checkpcfun()
