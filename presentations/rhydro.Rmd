@@ -20,8 +20,9 @@ if (knitr:::is_html_output()) {
 # Using R in hydrology (EGU2017 short course)
 
 *Instructors*: Shaun Harrigan, Katie Smith, Berry Boessenkool and Daniel Klotz  
-*Organizer*: Berry Boessenkool, PhD student at Potsdam University (Germany)  
-*Contact*: Questions and feedback are welcome via <berry-b@gmx.de>
+*Organizer*: Berry Boessenkool  
+*Contact*: Questions and feedback are welcome via <berry-b@gmx.de>  
+*Last updated*: 2017-04-24
 
 These slides and all other course materials can be found at  
 <font size="6">[github.com/brry/rhydro](https://github.com/brry/rhydro)</font>   
@@ -55,7 +56,7 @@ We have prepared:
 * [Using R as GIS](#gis) (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)
 * [River discharge time-series](#discharge) visualisation and extreme value statistics (`animation` + `extremeStat`)
 * [Hydrological modelling](#hydmod) with `airGR`
-* [Exploratory Data Analysis](#eda) including flow duration curve and trend analysis on time-series
+* [Trend anaysis](#trend) including flow duration curve (`trend` + `hydroTSM`)
 
 \ 
 
@@ -233,7 +234,7 @@ document:
 
 # GIS
 Using R as GIS (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)  
-**Berry Boessenkool**
+**Berry Boessenkool** Potsdam University, Germany (<berry-b@gmx.de>)  
 
 ### Shapefiles
 
@@ -540,7 +541,7 @@ ani.width=7*200, ani.height=5*200)
 
 # Hydmod
 Hydrological modelling with `airGR`   
-**Katie Smith** (Centre for Ecology & Hydrology) <k.a.smith@ceh.ac.uk>
+**Katie Smith** Centre for Ecology & Hydrology (<k.a.smith@ceh.ac.uk>)
 
 This is an demonstration of how to use the airGR package of hydrological models in R, as well as how to plot interactive timeseries graphs with the dygraphs package.
 
@@ -801,9 +802,492 @@ GR specific questions? Email <airGR@irstea.fr>
 \
 [top](#top)
 
-# EDA
+# Trend
 Exploratory Data Analysis including flow duration curve and trend analysis on time-series   
-**Shaun Harrigan**
+**Shaun Harrigan** Centre for Ecology & Hydrology (<shauhar@ceh.ac.uk>)
+
+***
+## 1. Introduction
+
+There is no 'one best' programming language, each has individual benefits. R's strong point is importing messy 'real-world' data, cleaning it up, and exploring it with powerful statistical tools!
+
+In this short 'Trend Analysis taster' we're going to:
+
+* **Read** and clean up streamflow data from the Boyne catchment in Ireland
+* Run an **Exploratory Data Analysis (EDA)**
+    + Flow Duration Curve (FDC)
+    + Check statistical assumptions
+* **Plot** time-series
+* Perform a **Mann-Kendall** trend test for evidence of gradual change
+* Perform a **Pettitt** point test for evidence of abrupt change
+
+#### The Boyne Case Study
+
+We will use the Boyne catchment in Ireland as a case study. This catchment has a well known abrupt change in its time-series [(Harrigan et al., 2014 HESS)](http://www.hydrol-earth-syst-sci.net/18/1935/2014/) and this case study now features in ["the Dirty Dozen of freshwater science"](http://onlinelibrary.wiley.com/doi/10.1002/wat2.1209/full) by Wilby et al., 2017 WIREs: Water. 
+
+![](https://raw.githubusercontent.com/brry/rhydro/master/presentations/Shaun/The_Boyne_CaseStudy.PNG)
+
+
+
+OK, lets go get the data...
+
+***
+## 2. Read in data
+
+Data taken from HESS paper:
+
+* Obs = Observed daily mean flow (m3/s) data from 01/01/1952 to 31/12/2009
+* Sim = Simulated daily mean flow (m3/s) data from 01/01/1952 to 31/12/2009 using ensemble mean across 3 hydrological models and 328 parameter sets 
+
+Observed streamflow data provided by the [Office of Public Works (OPW)](http://waterlevel.ie/hydro-data/home.html) in Ireland. Please refer to their Ts&Cs before re-use. 
+
+**A .csv of the data used in this tutorial can be found [here](https://raw.githubusercontent.com/brry/rhydro/master/presentations/data/Boyne_HESS_data_EGU2017.csv).**
+
+```{r, message=FALSE, warning=FALSE}
+
+# Load required packages
+library(trend) # Non-Parametric trend tests and change point detection (by Thorsten Pohlert)
+library(hydroTSM) # Time series analysis for hydrological modelling (by Mauricio Zambrano Bigiarini )
+
+# Read data
+myData <- read.csv("data/Boyne_HESS_data_EGU2017.csv")
+
+# Take a peak
+head(myData) # Fist 6 rows
+tail(myData) # Last 6 rows
+
+# Quick line plot of Obs and Sim (type = 'l')
+plot(myData$Obs, type = 'l')
+lines(myData$Sim, col = "red") # 'lines' will add a line to active plot device
+
+
+```
+
+***
+## 3. Flow Duration Curves (FDC)
+
+We can create a FDC easily using the `fdc` function from the **hydroTSM** package. Here we will have a look at FDCs from both observed and simulated Boyne streamflow series, pre and post the known period of channel drainage (1969-1986):
+
+```{r, message=FALSE}
+
+# Subset data pre- and post- drainage period
+preDrain <- subset(myData, myData$Year >= 1952 & myData$Year <= 1968)
+postDrain <- subset(myData, myData$Year >= 1987 & myData$Year <= 2009)
+
+# Select 'Obs' and 'Sim' columns and convert to 'matrix' class (required in 'fdc' function)
+preDrainFDC <- as.matrix(preDrain[ ,c(4, 5)])
+postDrainFDC <- as.matrix(postDrain[ ,c(4, 5)])
+
+# Plot pre-drainage FDC and print first 10 values
+fdc(preDrainFDC, main = "FDC Pre-drainage (1952-1968)", verbose = FALSE)[c(1:10)]
+
+# Plot post-drainage FDC and print first 10 values
+fdc(postDrainFDC, main = "FDC Post-drainage (1987-2009)", verbose = FALSE)[1:10]
+
+```
+
+***
+## 4. Exploratory Data Analysis (EDA)
+
+EDA is the first step in any trend analysis, and its importance is often under appreciated. It serves 3 key purposes: 
+
+1. Visually identifying interesting patterns in the data
+2. Detecting data quality problems (missing data, outliers etc.)
+3. Testing key assumptions for statistical tests used later (e.g. Normality and serial correlation)
+
+We will run a number of standard EDA tests and plots using R's built in functions:
+
+* Extract desired hydrological indicators (`aggregate`, `mean`)
+* Time-series plots (`plot` with linear regression line [`lm`] and `lowess` smoothing)
+* Histograms (`hist`)
+* Q-Q plot to check normality (`qqnorm`; `qqline`)
+* Shapiro-Wilk test for normality (`shapiro.test`)
+* Autocorrelation Function (`acf`)
+
+
+#### 4.1 Extract hydrological indicators
+
+We will keep it simple and extract **Annual Mean Flow (AMF)** from both observed and simulated series using `aggregate` with the `mean` function.
+
+```{r}
+
+# Annual mean flow series - Obs (Note: na.rm = T is used to deal with NAs)
+obsAMF <- aggregate(myData$Obs, by = list(myData$Year), FUN = function(x) { mean(x, na.rm = T)})
+colnames(obsAMF) <- c("Year", "Flow")  
+
+# Annual mean flow series - Sim
+simAMF <- aggregate(myData$Sim, by = list(myData$Year), FUN = mean)  
+colnames(simAMF) <- c("Year", "Flow")  
+
+# Have a look!
+head(obsAMF)
+str(obsAMF)
+
+```
+
+#### 4.2 Plot both observed and simulated series with linear and lowess lines
+
+```{r}
+
+
+# Timie-series plot of observed and simulated AMF
+plot(obsAMF$Year, obsAMF$Flow, type = 'l', main = "Observed & simulated Boyne AMF 1952-2009", xlab = "Year", ylab = "cumecs", panel.first = grid(), lwd = 1.5)
+
+lines(simAMF$Year, simAMF$Flow, col = "red", lwd = 1.5)
+
+# Linear regression 
+linRegOutObs <- lm(obsAMF$Flow~obsAMF$Year)
+linRegOutSim <- lm(simAMF$Flow~simAMF$Year)
+
+# Add linear regression line
+abline(linRegOutObs, col = "black", lty = 2, lwd = 2)
+abline(linRegOutSim, col = "red", lty = 2, lwd = 2)
+
+# Add LOWESS line (f = smoother span paramter, i.e. proportion of data influencing smooth)
+lines(lowess(obsAMF$Flow~obsAMF$Year, f = 0.2), col = "black", lty = 3, lwd = 2)
+lines(lowess(simAMF$Flow~simAMF$Year, f = 0.2), col = "red", lty = 3, lwd = 2)
+
+
+# Add legend to plot
+legend("topleft",
+       legend=c("Obs", "Sim"),
+       col= c("black", "red"), lty=1,lwd=1, bty="n")
+
+# Add text
+text(2000, 20, paste("Trend slope = ", round(linRegOutObs$coefficients[2],2), sep = ""), col = "black")
+text(2000, 17, paste("Trend slope = ", round(linRegOutSim$coefficients[2],2), sep = ""), col = "red")
+
+```
+
+#### 4.3 Check for normality 
+
+Many statistical tests require that the data follow normal (or Gaussian) distribution, for example linear regression.
+
+However, often hydroclimatic data violate this assumption, so non-parametric tests are more widely applied (e.g. Mann-Kendall, Pettitt), as will be used below. However, it is still good practice to know the distribution of your data. 
+
+We'll use **histograms**, **Quantile-Quantile-plots (QQ plots)**, and the **shapiro-Wilk** test to examine the null hypothesis of normality. 
+
+#### Histograms
+```{r}
+
+# First have a look at the historgram (prob = TRUE is for density)
+# Obs histogram
+hist(obsAMF$Flow, col = "darkblue", prob = TRUE, main = "Obs")
+lines(density(obsAMF$Flow), lwd = 2)
+
+# Sim histogram
+hist(simAMF$Flow, col = "darkblue", prob = TRUE, main = "Sim")
+lines(density(simAMF$Flow), lwd = 2)
+
+```
+
+#### QQ-plots
+
+```{r}
+
+# QQplot for normality - Obs AMF
+qqnorm(obsAMF$Flow, col = "darkblue", main = "Obs"); qqline(obsAMF$Flow, distribution = qnorm)
+
+# QQplot for normality - Sim AMF
+qqnorm(simAMF$Flow, col = "darkblue", main = "Sim"); qqline(simAMF$Flow, distribution = qnorm)
+
+```
+
+
+#### Shapiro-Wilk test for normality
+
+We will reject the null hypothesis of normality for p-value < 0.1 (according to Royston (1995) - R help page for `shapiro-test`).
+
+```{r}
+
+# Shapiro-Wilk - Obs
+shapiro.test(obsAMF$Flow)
+
+# Shapiro-Wilk - Sim
+shapiro.test(simAMF$Flow)
+
+```
+
+**Conclusion on Normality:** The simulated series can be considered broadly normally distributed, but the observed series fails the Shapiro-Wilk test and we can see from the histogram is bimodal. 
+
+#### 4.4 Check for serial correlation 
+
+Presence of positive serial correlation (or autocorrelation) within a series can inflate Type 1 errors. That is, the flow from last year is somehow related to this year. This is common in slow responding groundwater catchments, or in regions that are strongly affected by large-scale climate process over multi-year periods (e.g. North Atlantic Oscillation (NAO)) in Europe. This tends to return too many *"statistically significant"* results, and thus misleading results.
+
+We'll use the built in **autocorrelation function** `acf`. Typically we're only concerned if there is evidence of statistically significant positive lag-1 serial correlation at the 5% level (see dashed horizontal line in plots):
+
+```{r}
+
+# ACF plot for testing for autocorrelation - Obs AMF
+acf(obsAMF$Flow, main = "Obs")
+
+# ACF plot for testing for autocorrelation - Sim AMF
+acf(simAMF$Flow, main = "Sim")
+
+
+```
+
+**Conclusion on Serial Correlation**: There is no statistically significant lag-1 serial correlation, although some evidence at lag-2 in observed Annual Mean Flow. 
+
+***
+
+## 5. Statistical trend and change point analysis 
+
+Our **EDA** has revealed a large apparent difference in pattern of change in observations compared to simulated. However, we can test if these patterns of change are statistically significant.
+
+We'll use the freely available **trend** package for 3 tasks:
+
+1. Calculatinig the relative % change in flow over the period-of-record using the robust Thei-Sen approach (TSA) (`sens.slope`)
+2. Testing for gradual change in annual mean observed and simulated flow with the Mann-Kendall test (`mk.test`)
+3. Testing for abrupt change in annual mean observed and simulated flow with the Pettitt test (`pettitt.test`)
+
+#### 5.1 Calculate trend magnitude using the relative Theil-Sen Approach (TSArel)
+
+The non-parametric Theil-Sen estimator is a more robust measure of trend slope than linear regression and will give a much more accurate value in the presence of outliers.
+
+The relative Theil-Sen Approach (TSArel) for calculation of trend magnitude (%) is given:
+
+TSArel = ($\beta * n$) / $\mu$ * 100
+
+where $\beta$ is the slope from Theil-Sen, $n$ is the series length, and $\mu$ is the mean of the series.
+
+```{r}
+
+# First the 'trend' package requires data are in 'ts' (time-series) format
+obsAMFts <- as.ts(obsAMF)
+simAMFts <- as.ts(simAMF)
+
+# Calcualte Theil-Sean slope - Obs & Sim
+obsSenSlope <- sens.slope(obsAMFts[ ,2])[1] # obs
+simSenSlope <- sens.slope(simAMFts[ ,2])[1] # Sim
+
+# Calculate TSArel:
+obsTSArel <- (as.numeric(obsSenSlope) * length(obsAMF$Year)) / mean(obsAMF$Flow) * 100
+simTSArel <- (as.numeric(simSenSlope) * length(simAMF$Year)) / mean(simAMF$Flow) * 100
+
+# Trend magnitude in Obs (%)
+obsTSArel
+
+# Trend magnitude in Sim (%)
+simTSArel
+
+```
+
+**Trend magnitude's** in annual mean flow are TSArel = +38% and TSArel = +12% for observed and simulated, respectively! 
+
+WOW... an *almost 40% increase* in observed mean flow in the Boyne. Let's see what the statistical trend tests say...
+
+
+#### 5.2 Mann-Kendall test for (gradual) change
+
+We'll test for gradual (monotonic) trend with the non-parametric Mann-Kendall test. 
+
+The **standardised MK statistic (MKZs)** follows the standard normal distribution with a mean of zero and variance of one. A *positive (negative)* value of MKZs indicates an *increasing (decreasing)* trend. Statistical significance was evaluated with probability of type 1 error set at the 5% significance level. We will use a two-tailed MK test (as we won't assume the direction of change beforehand). 
+
+**The null hypothesis of no trend (increasing or decreasing) is rejected when |MKZs|>1.96.**
+
+```{r}
+
+# Obs MKZs
+obsMKOut <- mk.test(obsAMFts)
+obsMKZs  <- obsMKOut$Zg[2]
+obsMKZs
+
+# Sim MKZs
+simMKOut <- mk.test(simAMFts)
+simMKZs  <- simMKOut$Zg[2]
+simMKZs
+
+
+```
+
+**MK Results:** MKZs for obs is 3.1 which is much higher than our significance threshold of |1.96| so **there is statistically significant increasing trend in observed mean flow.**
+
+However, MKZs for simulated flow is 1.1, so while the trend is increasing, the change **is not** statistically significant. 
+
+#### 5.3 Pettitt test for (abrupt) change
+
+We'll use the Pettitt statistic to identify a single (abrupt) change point in observed and simulated series.
+
+The Pettitt test is nonparametric and relative to other tests is less sensitive to outliers and skewed data. **The null hypothesis (no step change in time series) against the alternative (an upward or downward change point in a given year) is tested at the 5% significance level.**
+
+```{r}
+
+# Pettitt test
+obsPettittOut <- pettitt.test(obsAMFts[ ,2])
+simPettittOut <- pettitt.test(simAMFts[ ,2])
+
+# Find p-value of change points
+obs_PettP_val <- obsPettittOut$p.value
+sim_PettP_val <- simPettittOut$p.value
+
+# Find year of change points
+# Obs
+obs_PettYear  <- obsPettittOut$estimate
+obsChangeYear <- obsAMF$Year[obs_PettYear]
+obsChangeYear # Year
+obs_PettP_val # p-value
+
+# Sim  
+sim_PettYear  <- simPettittOut$estimate
+simChangeYear <- simAMF$Year[sim_PettYear]
+simChangeYear # Year
+sim_PettP_val # p-value
+
+
+```
+
+**Pettitt Results:** There is a **statistically significant upward change point in Boyne mean flow** and this occurred in 1978 (p = 0.001). While the Pettitt test returns 1978 as the year of change, **it's much too weak to be considered an abrupt change point** as the p-value is 0.4.
+
+***
+## 6. Summary of results
+
+**Test**    | **Observed**         | **Modelled**
+--------    |-------------         |-------------
+**TSArel**  | 38%                  | 12%
+**MKZs**    | 3.1                  | 1.1
+**Pettitt** | 1978 (p = 0.001)     | 1978 (p = 0.4)
+
+
+```{r}
+
+
+# Timie-series plot of observed and simulated AMF
+plot(obsAMF$Year, obsAMF$Flow, type = 'l', main = "Observed & simulated Boyne AMF 1952-2009", xlab = "Year", ylab = "cumecs", panel.first = grid(), lwd = 1.5)
+
+lines(simAMF$Year, simAMF$Flow, col = "red", lwd = 1.5)
+
+# Linear regression 
+linRegOutObs <- lm(obsAMF$Flow~obsAMF$Year)
+linRegOutSim <- lm(simAMF$Flow~simAMF$Year)
+
+# Add linear regression line
+abline(linRegOutObs, col = "black", lty = 2, lwd = 2)
+abline(linRegOutSim, col = "red", lty = 2, lwd = 2)
+
+# Add LOWESS line (f = smoother span paramter, i.e. proportion of data influencing smooth)
+lines(lowess(obsAMF$Flow~obsAMF$Year, f = 0.2), col = "black", lty = 3, lwd = 2)
+lines(lowess(simAMF$Flow~simAMF$Year, f = 0.2), col = "red", lty = 3, lwd = 2)
+
+# Add vertical change point line
+abline(v = 1978, col = "darkblue", lwd = 2)
+
+text(1976, 45, "Change Point 1978", col = "darkblue", srt = 90) # 'srt' rotates text 90 degrees
+
+
+# Add legend to plot
+legend("topleft",
+       legend=c("Obs", "Sim"),
+       col= c("black", "red"), lty=1,lwd=1, bty="n")
+
+# Add text
+text(2000, 20, paste("Trend mag. (%) = ", round(obsTSArel,0), sep = ""), col = "black")
+text(2000, 17, paste("Trend mag. (%) = ", round(simTSArel,0), sep = ""), col = "red")
+
+
+```
+
+## 7. Further topics 
+
+#### 7.1 Block-bootstrapping (BBS) statistics
+
+If the serial correlation assumption is severely violated, block-bootstrapping (BBS) offers a viable method - example below:
+
+```{r, message=FALSE, warning=FALSE}
+
+# Need 'boot' package
+library(boot) # bootstrapping
+library(Kendall) # Another package with the 'Mann-Kendall' test - but this works better with 'tsboot'
+
+# My MKZs Function ---------------------------------------------------------------
+myMKZsFun <- function(x) {
+
+  S <- MannKendall(x)$S
+  varS <- MannKendall(x)$varS
+
+  #Calculate the Zs statistic
+  if (S > 0) {
+    Zs <- (S-1)/sqrt(varS)
+  } else if (S < 0) {
+    Zs <- (S+1)/sqrt(varS)
+  } else {
+    Zs <- 0
+  }
+
+  return(Zs)  # MkZs
+
+}
+
+# end function --------------------------------------------------------------------
+
+
+# Set.seed() for reproducability
+set.seed(50)
+
+# BBS with block length = 4 and 1000 resamples
+b4 <- tsboot((obsAMF[ ,2]), myMKZsFun, R=1000,  sim="fixed", l=3)
+
+# sort boot output
+bs4 <- sort(b4$t)
+
+# BBS critical values
+bs4[25] # lower
+bs4[975] # upper
+
+# Plot bootstrap output
+plot(b4)
+
+
+```
+
+#### 7.2 Multiple Mann-Kendall tests
+
+R is much more powerful than just a statistical tool - it's also a capable programming environment so we're able to perform individual tasks, such as calculating a trend statistic, for many iterations using loops etc.
+
+Here is a quick example of how the dependence of the Mann-Kendall Zs statistic on the period-of-record used. We test for changes in observed and modelled flow from all possible start years up to 1985: 1952-2009, 1953-2009,...,1985-2009.
+
+```{r}
+
+# Create output matrix to store trend results
+mat <- matrix(NA, ncol = 3, nrow = 34)
+colnames(mat) <- c("StartYear", "obsMKZs", "simMKZs")
+mat[ ,1] <- 1952:1985
+
+# Loop Mann-Kendall test for all possible start years in both obs and sim
+for(i in 1:34) {
+
+  mat[i,2] <- myMKZsFun(obsAMF[ ,2][i:58]) # Obs
+  mat[i,3] <- myMKZsFun(simAMF[ ,2][i:58]) # Sim
+  
+} # end i
+
+# Plot
+plot( mat[ ,1], mat[ ,2], type = 'l', col = "darkgray", lty = 1, lwd = 2, ylim = c(-3, 3), main = "Persistence of trend - Obs & Sim", xlab = "Start Year", ylab = "MKZs")
+lines(mat[ ,1], mat[ ,3], col = "darkgray", lty = 3, lwd = 2)
+
+# Add lines to show statistically significant +/- trends and zero trend
+abline(h =  1.96, col = "red", lty = 2, lwd = 2)
+abline(h = -1.96, col = "red", lty = 2, lwd = 2)
+abline(h = 0, col = "black", lty = 2, lwd = 2)
+
+# First legend
+legend.text <- c("No trend (MKZs = 0)", "Sig. trend (MKZs > |1.96|)")
+legend("bottomleft",                   # Set location of the legend
+       legend = legend.text,           # Specify text 
+       col = c("black","red"),         # Set colors for legend
+       lty = c(2,2),                   # Set type of lines in legend
+       merge = TRUE, bty = 'n', lwd = c(2, 2))
+
+# Second legend
+legend("topright",
+       legend=c("Obs", "Sim"),
+       col= c("darkgray", "darkgray"), lty=c(1, 3),lwd=c(2,2), bty="n")
+
+```
+
+***
+#### END of tutorial - I hope you'll agree R is a nice (free!) alternative to e.g. Matlab :) 
+***
 
 \
 [top](#top)
