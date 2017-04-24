@@ -45,9 +45,10 @@ The following topics will be covered:
 
 ### slides
 You can `rightclick - Save as` the 
-[notebook with R output](https://github.com/brry/rhydro/raw/master/presentations/rhydro.nb.html)
-or [text + code only](https://github.com/brry/rhydro/raw/master/presentations/rhydro.html)
+[html notebook with R output](https://github.com/brry/rhydro/raw/master/presentations/rhydro.nb.html)
 and then open the html document in a regular browser.
+For smartphones, you can try the [pdf](https://github.com/brry/rhydro/raw/master/presentations/rhydro.pdf)
+(without the interactive graphs).
 
 To get all the material including the datasets and presentation source code, we recommend to
 [download the whole github course repository](https://github.com/brry/rhydro/archive/master.zip).
@@ -63,7 +64,9 @@ To get all the material including the datasets and presentation source code, we 
 * [Rmarkdown](http://rmarkdown.rstudio.com/) - The document/notebook generation framework for R/Rstudio
 * [Github guides](https://guides.github.com/) - Introduction to gitHUB
 * [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
-
+* [RShiny `influence regression app` by  David Wright]
+(https://davidpwright.shinyapps.io/LinearRegressionInfluenceExample/)
+* `Evapotranspiration` R package that enables the use of 17 well-known ET models in a consistent manner.
 
 ### install
 install R and Rstudio:

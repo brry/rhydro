@@ -1,6 +1,9 @@
 ---
 title: "Rhydro"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
   html_notebook:
     code_folding: none
     toc: yes
@@ -9,12 +12,15 @@ output:
     toc_depth: 3
     toc_float:
       collapsed: no
+always_allow_html: yes
 ---
 
 ```{r setup, include=FALSE}
 if (knitr:::is_html_output()) {
   knitr::opts_chunk$set(eval = FALSE)
 }
+
+#knitr::opts_chunk$set(cache=TRUE)
 ```
 
 # Using R in hydrology (EGU2017 short course)
@@ -23,6 +29,9 @@ if (knitr:::is_html_output()) {
 *Organizer*: Berry Boessenkool  
 *Contact*: Questions and feedback are welcome via <berry-b@gmx.de>  
 *Last updated*: 2017-04-24
+
+Please let us know your current R knowledge level by filling out the short survey at  
+<font size="6">[bit.ly/knowR](https://bit.ly/knowR)</font> 
 
 These slides and all other course materials can be found at  
 <font size="6">[github.com/brry/rhydro](https://github.com/brry/rhydro)</font>   
@@ -58,38 +67,34 @@ We have prepared:
 * [Hydrological modelling](#hydmod) with `airGR`
 * [Trend anaysis](#trend) including flow duration curve (`trend` + `hydroTSM`)
 
-\ 
-
-Before we get started, please let us know your current R knowledge level by filling out the short survey at  
-<font size="6">[bit.ly/knowR](https://bit.ly/knowR)</font> 
 
 \
 
 [top](#top)
 
 # Report
-Good coding practice, report generation (Rstudio, `rmarkdown`, R notebook)  
-**Daniel Klotz**
+Good coding practice, report generation (Rstudio, `rmarkdown`, R notebook)
+**Daniel Klotz** BOKU Vienna (<daniel.klotz@boku.ac.at>)
 
 ### Why to use R
 
 ![](daniel/intro/goals.jpeg)
 
-Why I did not use R: 
+Why I did not use R:
 
 ![](daniel/intro/equals.jpeg)
 
 
-Whats great about R: 
+Whats great about R:
 ```{r}
   library(ggplot2)
   test_data <- mpg
-  test_plot <- ggplot(test_data, aes(displ, hwy, colour = class)) + 
+  test_plot <- ggplot(test_data, aes(displ, hwy, colour = class)) +
     geom_point()
   test_plot
 ```
 
-Why I decided to use R: 
+Why I decided to use R:
 
 ![pipe](daniel/intro/magrittr.jpeg)
 
@@ -107,7 +112,7 @@ Previously:
 Now:
 ```{r}
 library(magrittr)
-car_data2 <- 
+car_data2 <-
   mtcars %>%
   subset(hp > 100) %>%
   aggregate(. ~ cyl, data = ., FUN = . %>% mean %>% round(2)) %>%
@@ -117,8 +122,8 @@ car_data2 <-
 
 
 **btw:**
-You can integrate other programming languages with ease. Here an example from 
-[Yihui Xie](https://yihui.name/knitr/demo/engines/) for the use of `Fortran` 
+You can integrate other programming languages with ease. Here an example from
+[Yihui Xie](https://yihui.name/knitr/demo/engines/) for the use of `Fortran`
 in Rmarkdown:
 
 1. Compile Code:
@@ -142,14 +147,14 @@ in Rmarkdown:
     str(res)
     ```
 
-Be happy with the result: 
+Be happy with the result:
 >     `## List of 2`
 >     `##  $ n: int 100000`
 >     `##  $ x: num 2.72`
 
 ---
 
-### Markdown 
+### Markdown
 HT**M**L: HyperText **Markdown** Language
 
 John Gruber:
@@ -157,18 +162,18 @@ John Gruber:
 [![John Gruber](daniel/intro/John_Gruber_wiki.jpeg)](https://en.wikipedia.org/wiki/John_Gruber)
 
 
-Comparison: Markdown vs. Latex 
+Comparison: Markdown vs. Latex
 [![Comparison](daniel/intro/yihui_latex-vs-markdown.png)](https://youtu.be/2yvW0O_7xOg)
 
 
-Rstudio provides cheat-sheets with the most important informations about many 
+Rstudio provides cheat-sheets with the most important informations about many
 of their "favorite" packages & software:
 
 [![Cheat Sheet](daniel/intro/Rmarkdown_cheatsheet.png)](https://www.rstudio.com/resources/cheatsheets/)
 
 ** Rmarkdown **
 
-In Rstudio: 
+In Rstudio:
 
 <div align="center">
   <img width="600px" src="daniel/reports/Rmark1.png" alt="Rmark1" />
@@ -184,14 +189,14 @@ In Rstudio:
 
 "Native" Formats:
 
-- [html](daniel/show/Rmark.html) 
-- [pdf](daniel/show/Rmark.pdf) 
+- [html](daniel/show/Rmark.html)
+- [pdf](daniel/show/Rmark.pdf)
 - [word](daniel/show/Rmark.docs)
 
-Much more possible if you adress pandoc directly: 
+Much more possible if you adress pandoc directly:
 [![pandoc](daniel/reports/pandoc_diagram.jpg)](http://pandoc.org/)
 
-Information in the text can be automatically updated with the rest of the 
+Information in the text can be automatically updated with the rest of the
 document:
 [![time for coffee](daniel/reports/coffee.png)
 
@@ -220,28 +225,36 @@ document:
 #### Presentations
 [![bookdown1](daniel/examples/presentations_1.png)](http://rmarkdown.rstudio.com/revealjs_presentation_format.html)
 
-#### Widgets 
+#### Widgets
 [![cran-gauge](daniel/examples/widgets_1.png)](https://gallery.shinyapps.io/cran-gauge/)
 
-#### Apps (Shiny) 
+#### Apps (Shiny)
 [![shiny](daniel/examples/shiny_1.jpeg)](http://rmarkdown.rstudio.com/authoring_shiny.html)
 [![shiny2](daniel/examples/shiny_2_gallery.png)](https://shiny.rstudio.com/gallery/superzip-example.html)
 ![shiny2](daniel/examples/shiny_3_johannes.png)
+
+![shiny3](data/shinywright.png)
+R based hydrology tools from the [Intelligent Water Decisions Research Group](http://waterdecisions.org/) of the University of Adelaide:
+
+* RShiny `influence regression app` by  David Wright:
+<https://davidpwright.shinyapps.io/LinearRegressionInfluenceExample/>
+* `Evapotranspiration` R package that enables the use of 17 well-known ET models in a consistent manner.
+
 
 
 \
 [top](#top)
 
 # GIS
-Using R as GIS (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)  
-**Berry Boessenkool** Potsdam University, Germany (<berry-b@gmx.de>)  
+Using R as GIS (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)
+**Berry Boessenkool** Potsdam University, Germany (<berry-b@gmx.de>)
 
 ### Shapefiles
 
-Reading shapefiles with `maptools::readShapeSpatial` and `rgdal::readOGR` is obsolete.  
-Instead, use `sf::st_read`. `sf` is on CRAN since oct 2016.  
-Main reaction when using sf: "Wow, that is fast!"  
-[Download the shapefile](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/brry/rhydro/tree/master/presentations/data/PrecBrandenburg) 
+Reading shapefiles with `maptools::readShapeSpatial` and `rgdal::readOGR` is obsolete.
+Instead, use `sf::st_read`. `sf` is on CRAN since oct 2016.
+Main reaction when using sf: "Wow, that is fast!"
+[Download the shapefile](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/brry/rhydro/tree/master/presentations/data/PrecBrandenburg)
 or better: [download the whole github course repository](https://github.com/brry/rhydro/archive/master.zip)
 
 ```{r}
@@ -267,24 +280,24 @@ plot(rain[,1])
 Static map:
 ```{r}
 prj <- sf::st_crs(rain)$proj4string
-cent_ll <- OSMscale::projectPoints(Y,X, data=centroids, to=OSMscale::pll(), from=prj)
+#cent_ll <- OSMscale::projectPoints(Y,X, data=centroids, to=OSMscale::pll(), from=prj)
 #map_static <- OSMscale::pointsMap(y,x, cent_ll, fx=0.08, type="maptoolkit-topo", zoom=6)
 #save(map_static, file="data/map_static.Rdata")
-load("data/map_static.Rdata")
-OSMscale::pointsMap(y,x, cent_ll, map=map_static)
+#load("data/map_static.Rdata")
+#OSMscale::pointsMap(y,x, cent_ll, map=map_static)
 ```
 
 Interactive map:
-```{r}
+```{r,eval=F}
 library(leaflet)
-cent_ll$info <- paste0(sample(letters,nrow(cent_ll),TRUE), ", ", round(cent_ll$x,2), 
+cent_ll$info <- paste0(sample(letters,nrow(cent_ll),TRUE), ", ", round(cent_ll$x,2),
                        ", ", round(cent_ll$y,2))
 leaflet(cent_ll) %>% addTiles() %>% addCircleMarkers(lng=~x, lat=~y, popup=~info)
 ```
 
 Interactive map of shapefile:
 ```{r}
-# make sure to have installed the development version of mapview: 
+# make sure to have installed the development version of mapview:
 # devtools::install_github("environmentalinformatics-marburg/mapview", ref = "develop")
 library(berryFunctions) # classify, seqPal
 col <- seqPal(n=100, colors=c("red","yellow","blue"))[classify(rain$P1)$index]
@@ -300,7 +313,7 @@ Plot original points colored by third dimension:
 pcol <- colorRampPalette(c("red","yellow","blue"))(50)
 x <- centroids$X # use cent_ll$x for projected data
 y <- centroids$Y
-berryFunctions::colPoints(x, y, rain$P1, add=FALSE, col=pcol)
+berryFunctions::colPoints(x, y, rain$P1, add=FALSE, col=pcol, y1=0.8)
 ```
 
 Calculate the variogram and fit a semivariance curve
@@ -313,9 +326,9 @@ plot(vario)
 lines(fit)
 ```
 
-Determine a useful resolution 
+Determine a useful resolution
 (keep in mind that computing time rises exponentially with grid size)
-```{r}
+```{r,eval=F}
 # distance to closest other point:
 d <- sapply(1:length(x), function(i)
             min(berryFunctions::distance(x[i], y[i], x[-i], y[-i])) )
@@ -325,7 +338,7 @@ hist(d/1000, breaks=20, main="distance to closest gauge [km]")
 mean(d/1000) # 8 km
 ```
 
-Perform kriging on a grid with that resolution 
+Perform kriging on a grid with that resolution
 ```{r}
 res <- 1000 # 1 km, since stations are 8 km apart on average
 grid <- expand.grid(seq(min(x),max(x),res),
@@ -336,7 +349,7 @@ krico <- krige.control(type.krige="OK", obj.model=fit)
 load("data/krobj.Rdata") # line above is too slow for recreation each time
 ```
 
-Plot the interpolated values with `image` or an equivalent function 
+Plot the interpolated values with `image` or an equivalent function
 (see [Rclick](https://github.com/brry/rclick) 4.15) and add contour lines.
 ```{r}
 par(mar=c(0,3,0,3))
@@ -429,7 +442,7 @@ plotLexBoot(dle_boot, distcol="green")
 
 
 More details in the package vignette
-```{r}
+```{r, eval=FALSE}
 vignette("extremeStat")
 ```
 
@@ -461,8 +474,8 @@ Reading             , 51.461325,-0.967884
 ")
 #library(leaflet)
 #leaflet(meta) %>% addTiles() %>% addCircleMarkers(~lon, ~lat, popup=~name)
-map_thames <- OSMscale::pointsMap(lat,lon,meta, fx=1, fy=0.2, plot=FALSE, zoom=6, 
-                           type="maptoolkit-topo", quiet=TRUE)
+#map_thames <- OSMscale::pointsMap(lat,lon,meta, fx=1, fy=0.2, plot=FALSE, zoom=6, 
+#                           type="maptoolkit-topo", quiet=TRUE)
 ```
 
 Read datasets
@@ -487,7 +500,7 @@ dis <- Reduce(function(...) merge(..., all=T), thames)
 ```
 
 Code to generate one movie slice
-```{r}
+```{r, eval=FALSE}
 library(berryFunctions) # for lim0, monthAxis, textField, etc
 
 scene <- function(i, vlcnote=TRUE, map=TRUE, cex=1.2)
@@ -557,12 +570,12 @@ library(RColorBrewer)
 Now we'll load in some observational flow data from the River Thames (naturalised) in England - with thanks to the National River Flow Archive: http://nrfa.ceh.ac.uk/data/search
 ```{r}
 observed_data <- read.csv("data/Qobs_390010.csv")
-observed_data
+head(observed_data)
 observed_data$DATE <- strptime(observed_data$DATE, format = "%d/%m/%Y")
 ```
 
 In order to plot this as an interactive dygraph we need to change it to xts format
-```{r, fig.width=10, fig.height=6}
+```{r, fig.width=7, fig.height=5}
 observed_data_xts <- as.xts(observed_data$Qobs, order.by = observed_data$DATE)
 dygraph(observed_data_xts, main="Naturalised Streamflow Observations for the Thames at Kingston")%>%
   dyAxis("y", label="Streamflow (m3/s")%>%
@@ -573,13 +586,13 @@ Now lets read in some precipitation data - this is from CEH-GEAR: https://data.g
 
 ```{r}
 precip_data <- read.csv("data/rain_1961_2014_390010.csv")
-precip_data
+head(precip_data)
 ```
 and some potential evapotranspiration data - this is from CHESS-PE:https://data.gov.uk/dataset/climate-hydrology-and-ecology-research-support-system-potential-evapotranspiration-dataset-for-1
 
 ```{r}
 PET_data <- read.csv("data/CHESS_PET_1961_2015_390010.csv")
-PET_data
+head(PET_data)
 ```
 
 Note that our starting dates are not the same as our observational data, so we need to make a dataframe that matches the dates up. There are a lot of ways to do this. First we'll convert them to the same date format.
@@ -608,7 +621,7 @@ thames_data$PET <- PET_data$PET[which(PET_data$DATE==thames_data$date[1]):which(
 ### Interactive time series plot
 
 plot the observed streamflow with the precipitation data
-```{r, fig.width=10, fig.height=6}
+```{r, fig.width=7, fig.height=5}
 #  convert the observed discharge to runoff (so its in the same units as the precip)
 # divide by catchment area (m2) and mulitply by 86.4
 thames_data$obs <- (thames_data$obs/9948.0)*86.4
@@ -633,9 +646,15 @@ dyRangeSelector()
 
 ### Hydrological modeling
 
-OK, enough messing with data, lets do some modelling
+OK, enough messing with data, lets do some modelling.
+We are using the GR4J model, from the airGR package. 
+This was developed by IRSTEA, France. 
+See Perrin et al. (2003)
 
-see this website for a good guide through the model: 
+<img src="data/IMG_2001.PNG" alt="" style="width: 600px;"/>
+
+
+See this website for a good guide through the model: 
 <https://odelaigue.github.io/airGR/tutorial_1_getting_started.html>
 
 load the GR package
@@ -713,12 +732,12 @@ str(OutputsModel)
 ```
 
 use the inbuilt plot function to look at the results
-```{r}
+```{r, fig.width=7, fig.height=5}
 plot(OutputsModel, Qobs=BasinObs$Qobs[Ind_Run])
 ```
 
 looking good - but we've got some discrepancy at the low flows end. NSE is notorious for this, it is based on the square of the flows, so over-weights the calibration to the high flows. I wonder if the modified KGE can do any better?
-```{r}
+```{r, fig.width=7, fig.height=5}
 # make a few changes to the calibration criteria
 InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE2,
                                InputsModel = InputsModel,
@@ -769,7 +788,7 @@ OutputsCrit <- ErrorCrit_KGE2(InputsCrit = InputsCrit,
 slightly worse than the calibration period (0.9621) but not bad at all
 
 finally, let's run the model for the whole time period and plot a dygraph so we can look at the timeseries in more detail
-```{r}
+```{r, fig.width=7, fig.height=5}
 Ind_Run <- seq(which(BasinObs$DatesR=="1962-01-01"),
              which(BasinObs$DatesR=="2014-12-31"))
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
@@ -803,7 +822,7 @@ GR specific questions? Email <airGR@irstea.fr>
 [top](#top)
 
 # Trend
-Exploratory Data Analysis including flow duration curve and trend analysis on time-series   
+Exploratory Data Analysis including flow duration curve and trend analysis on time-series
 **Shaun Harrigan** Centre for Ecology & Hydrology (<shauhar@ceh.ac.uk>)
 
 ***
@@ -823,7 +842,7 @@ In this short 'Trend Analysis taster' we're going to:
 
 #### The Boyne Case Study
 
-We will use the Boyne catchment in Ireland as a case study. This catchment has a well known abrupt change in its time-series [(Harrigan et al., 2014 HESS)](http://www.hydrol-earth-syst-sci.net/18/1935/2014/) and this case study now features in ["the Dirty Dozen of freshwater science"](http://onlinelibrary.wiley.com/doi/10.1002/wat2.1209/full) by Wilby et al., 2017 WIREs: Water. 
+We will use the Boyne catchment in Ireland as a case study. This catchment has a well known abrupt change in its time-series [(Harrigan et al., 2014 HESS)](http://www.hydrol-earth-syst-sci.net/18/1935/2014/) and this case study now features in ["the Dirty Dozen of freshwater science"](http://onlinelibrary.wiley.com/doi/10.1002/wat2.1209/full) by Wilby et al., 2017 WIREs: Water.
 
 ![](https://raw.githubusercontent.com/brry/rhydro/master/presentations/Shaun/The_Boyne_CaseStudy.PNG)
 
@@ -837,9 +856,9 @@ OK, lets go get the data...
 Data taken from HESS paper:
 
 * Obs = Observed daily mean flow (m3/s) data from 01/01/1952 to 31/12/2009
-* Sim = Simulated daily mean flow (m3/s) data from 01/01/1952 to 31/12/2009 using ensemble mean across 3 hydrological models and 328 parameter sets 
+* Sim = Simulated daily mean flow (m3/s) data from 01/01/1952 to 31/12/2009 using ensemble mean across 3 hydrological models and 328 parameter sets
 
-Observed streamflow data provided by the [Office of Public Works (OPW)](http://waterlevel.ie/hydro-data/home.html) in Ireland. Please refer to their Ts&Cs before re-use. 
+Observed streamflow data provided by the [Office of Public Works (OPW)](http://waterlevel.ie/hydro-data/home.html) in Ireland. Please refer to their Ts&Cs before re-use.
 
 **A .csv of the data used in this tutorial can be found [here](https://raw.githubusercontent.com/brry/rhydro/master/presentations/data/Boyne_HESS_data_EGU2017.csv).**
 
@@ -889,7 +908,7 @@ fdc(postDrainFDC, main = "FDC Post-drainage (1987-2009)", verbose = FALSE)[1:10]
 ***
 ## 4. Exploratory Data Analysis (EDA)
 
-EDA is the first step in any trend analysis, and its importance is often under appreciated. It serves 3 key purposes: 
+EDA is the first step in any trend analysis, and its importance is often under appreciated. It serves 3 key purposes:
 
 1. Visually identifying interesting patterns in the data
 2. Detecting data quality problems (missing data, outliers etc.)
@@ -913,11 +932,11 @@ We will keep it simple and extract **Annual Mean Flow (AMF)** from both observed
 
 # Annual mean flow series - Obs (Note: na.rm = T is used to deal with NAs)
 obsAMF <- aggregate(myData$Obs, by = list(myData$Year), FUN = function(x) { mean(x, na.rm = T)})
-colnames(obsAMF) <- c("Year", "Flow")  
+colnames(obsAMF) <- c("Year", "Flow")
 
 # Annual mean flow series - Sim
-simAMF <- aggregate(myData$Sim, by = list(myData$Year), FUN = mean)  
-colnames(simAMF) <- c("Year", "Flow")  
+simAMF <- aggregate(myData$Sim, by = list(myData$Year), FUN = mean)
+colnames(simAMF) <- c("Year", "Flow")
 
 # Have a look!
 head(obsAMF)
@@ -935,7 +954,7 @@ plot(obsAMF$Year, obsAMF$Flow, type = 'l', main = "Observed & simulated Boyne AM
 
 lines(simAMF$Year, simAMF$Flow, col = "red", lwd = 1.5)
 
-# Linear regression 
+# Linear regression
 linRegOutObs <- lm(obsAMF$Flow~obsAMF$Year)
 linRegOutSim <- lm(simAMF$Flow~simAMF$Year)
 
@@ -959,13 +978,13 @@ text(2000, 17, paste("Trend slope = ", round(linRegOutSim$coefficients[2],2), se
 
 ```
 
-#### 4.3 Check for normality 
+#### 4.3 Check for normality
 
 Many statistical tests require that the data follow normal (or Gaussian) distribution, for example linear regression.
 
-However, often hydroclimatic data violate this assumption, so non-parametric tests are more widely applied (e.g. Mann-Kendall, Pettitt), as will be used below. However, it is still good practice to know the distribution of your data. 
+However, often hydroclimatic data violate this assumption, so non-parametric tests are more widely applied (e.g. Mann-Kendall, Pettitt), as will be used below. However, it is still good practice to know the distribution of your data.
 
-We'll use **histograms**, **Quantile-Quantile-plots (QQ plots)**, and the **shapiro-Wilk** test to examine the null hypothesis of normality. 
+We'll use **histograms**, **Quantile-Quantile-plots (QQ plots)**, and the **shapiro-Wilk** test to examine the null hypothesis of normality.
 
 #### Histograms
 ```{r}
@@ -1008,9 +1027,9 @@ shapiro.test(simAMF$Flow)
 
 ```
 
-**Conclusion on Normality:** The simulated series can be considered broadly normally distributed, but the observed series fails the Shapiro-Wilk test and we can see from the histogram is bimodal. 
+**Conclusion on Normality:** The simulated series can be considered broadly normally distributed, but the observed series fails the Shapiro-Wilk test and we can see from the histogram is bimodal.
 
-#### 4.4 Check for serial correlation 
+#### 4.4 Check for serial correlation
 
 Presence of positive serial correlation (or autocorrelation) within a series can inflate Type 1 errors. That is, the flow from last year is somehow related to this year. This is common in slow responding groundwater catchments, or in regions that are strongly affected by large-scale climate process over multi-year periods (e.g. North Atlantic Oscillation (NAO)) in Europe. This tends to return too many *"statistically significant"* results, and thus misleading results.
 
@@ -1027,11 +1046,11 @@ acf(simAMF$Flow, main = "Sim")
 
 ```
 
-**Conclusion on Serial Correlation**: There is no statistically significant lag-1 serial correlation, although some evidence at lag-2 in observed Annual Mean Flow. 
+**Conclusion on Serial Correlation**: There is no statistically significant lag-1 serial correlation, although some evidence at lag-2 in observed Annual Mean Flow.
 
 ***
 
-## 5. Statistical trend and change point analysis 
+## 5. Statistical trend and change point analysis
 
 Our **EDA** has revealed a large apparent difference in pattern of change in observations compared to simulated. However, we can test if these patterns of change are statistically significant.
 
@@ -1073,16 +1092,16 @@ simTSArel
 
 ```
 
-**Trend magnitude's** in annual mean flow are TSArel = +38% and TSArel = +12% for observed and simulated, respectively! 
+**Trend magnitude's** in annual mean flow are TSArel = +38% and TSArel = +12% for observed and simulated, respectively!
 
 WOW... an *almost 40% increase* in observed mean flow in the Boyne. Let's see what the statistical trend tests say...
 
 
 #### 5.2 Mann-Kendall test for (gradual) change
 
-We'll test for gradual (monotonic) trend with the non-parametric Mann-Kendall test. 
+We'll test for gradual (monotonic) trend with the non-parametric Mann-Kendall test.
 
-The **standardised MK statistic (MKZs)** follows the standard normal distribution with a mean of zero and variance of one. A *positive (negative)* value of MKZs indicates an *increasing (decreasing)* trend. Statistical significance was evaluated with probability of type 1 error set at the 5% significance level. We will use a two-tailed MK test (as we won't assume the direction of change beforehand). 
+The **standardised MK statistic (MKZs)** follows the standard normal distribution with a mean of zero and variance of one. A *positive (negative)* value of MKZs indicates an *increasing (decreasing)* trend. Statistical significance was evaluated with probability of type 1 error set at the 5% significance level. We will use a two-tailed MK test (as we won't assume the direction of change beforehand).
 
 **The null hypothesis of no trend (increasing or decreasing) is rejected when |MKZs|>1.96.**
 
@@ -1103,7 +1122,7 @@ simMKZs
 
 **MK Results:** MKZs for obs is 3.1 which is much higher than our significance threshold of |1.96| so **there is statistically significant increasing trend in observed mean flow.**
 
-However, MKZs for simulated flow is 1.1, so while the trend is increasing, the change **is not** statistically significant. 
+However, MKZs for simulated flow is 1.1, so while the trend is increasing, the change **is not** statistically significant.
 
 #### 5.3 Pettitt test for (abrupt) change
 
@@ -1128,7 +1147,7 @@ obsChangeYear <- obsAMF$Year[obs_PettYear]
 obsChangeYear # Year
 obs_PettP_val # p-value
 
-# Sim  
+# Sim
 sim_PettYear  <- simPettittOut$estimate
 simChangeYear <- simAMF$Year[sim_PettYear]
 simChangeYear # Year
@@ -1157,7 +1176,7 @@ plot(obsAMF$Year, obsAMF$Flow, type = 'l', main = "Observed & simulated Boyne AM
 
 lines(simAMF$Year, simAMF$Flow, col = "red", lwd = 1.5)
 
-# Linear regression 
+# Linear regression
 linRegOutObs <- lm(obsAMF$Flow~obsAMF$Year)
 linRegOutSim <- lm(simAMF$Flow~simAMF$Year)
 
@@ -1187,7 +1206,7 @@ text(2000, 17, paste("Trend mag. (%) = ", round(simTSArel,0), sep = ""), col = "
 
 ```
 
-## 7. Further topics 
+## 7. Further topics
 
 #### 7.1 Block-bootstrapping (BBS) statistics
 
@@ -1258,7 +1277,7 @@ for(i in 1:34) {
 
   mat[i,2] <- myMKZsFun(obsAMF[ ,2][i:58]) # Obs
   mat[i,3] <- myMKZsFun(simAMF[ ,2][i:58]) # Sim
-  
+
 } # end i
 
 # Plot
@@ -1273,7 +1292,7 @@ abline(h = 0, col = "black", lty = 2, lwd = 2)
 # First legend
 legend.text <- c("No trend (MKZs = 0)", "Sig. trend (MKZs > |1.96|)")
 legend("bottomleft",                   # Set location of the legend
-       legend = legend.text,           # Specify text 
+       legend = legend.text,           # Specify text
        col = c("black","red"),         # Set colors for legend
        lty = c(2,2),                   # Set type of lines in legend
        merge = TRUE, bty = 'n', lwd = c(2, 2))
@@ -1286,7 +1305,7 @@ legend("topright",
 ```
 
 ***
-#### END of tutorial - I hope you'll agree R is a nice (free!) alternative to e.g. Matlab :) 
+#### END of tutorial - I hope you'll agree R is a nice (free!) alternative to e.g. Matlab :)
 ***
 
 \
@@ -1296,8 +1315,11 @@ legend("topright",
 # Discussion
 
 Please give us feedback at
-<font size="6">[bit.ly/feedbackR](https://bit.ly/feedbackR)</font> 
+<font size="6">[bit.ly/feedbackR](https://bit.ly/feedbackR)</font>
 
-For discussions, please use the 
-[Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/).  
+For discussions, please use the
+[Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/).
+
+Further resources can be found on the github page:
+<https://github.com/brry/rhydro#resources>
 
