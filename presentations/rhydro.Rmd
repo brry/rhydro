@@ -287,6 +287,8 @@ prj <- sf::st_crs(rain)$proj4string
 #OSMscale::pointsMap(y,x, cent_ll, map=map_static)
 ```
 
+<img src="data/osmscale_fig.png" alt="" style="width: 400px;"/>
+
 Interactive map:
 ```{r,eval=F}
 library(leaflet)
@@ -294,6 +296,8 @@ cent_ll$info <- paste0(sample(letters,nrow(cent_ll),TRUE), ", ", round(cent_ll$x
                        ", ", round(cent_ll$y,2))
 leaflet(cent_ll) %>% addTiles() %>% addCircleMarkers(lng=~x, lat=~y, popup=~info)
 ```
+Looks similar in style to
+[rdwd interactive map](data/mapDWD.html)
 
 Interactive map of shapefile:
 ```{r}
@@ -844,7 +848,7 @@ In this short 'Trend Analysis taster' we're going to:
 
 We will use the Boyne catchment in Ireland as a case study. This catchment has a well known abrupt change in its time-series [(Harrigan et al., 2014 HESS)](http://www.hydrol-earth-syst-sci.net/18/1935/2014/) and this case study now features in ["the Dirty Dozen of freshwater science"](http://onlinelibrary.wiley.com/doi/10.1002/wat2.1209/full) by Wilby et al., 2017 WIREs: Water.
 
-![](https://raw.githubusercontent.com/brry/rhydro/master/presentations/Shaun/The_Boyne_CaseStudy.PNG)
+![](Shaun/The_Boyne_CaseStudy.PNG)
 
 
 
