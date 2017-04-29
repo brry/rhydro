@@ -6,6 +6,12 @@ checkpcfun <- function(...) # to keep everything within a function environment
 link <- " visit \nbrowseURL('https://github.com/brry/rhydro#install')\n"
 errors <- FALSE # are there significant insufficiencies?
 
+isinstalled <- function(p)    # is a package installed and usable?
+ {
+ out <- requireNamespace(p, quietly=TRUE)
+ try(unloadNamespace(p), silent=TRUE)
+ out
+ }
 
 # R ----
 
@@ -18,27 +24,39 @@ if(getRversion() < "3.3")
  message("Your ",R.version.string, " is too old for the course. Please", link)
  }
 
-if(!errors) if(getRversion() < "3.4.0") message("Note: your ", R.version.string, 
-             " is outdated. The current version is 3.4.0 (2017-04-21).\n",
+if(!errors) 
+ {
+ if(!isinstalled("rversions")) 
+  {
+  message("installing package 'rversions' with default settings. Press ESC to cancel.")
+  install.packages("rversions")
+  }
+ RV_inst <- getRversion()
+ RV_curr <- rversions::r_release()
+ if(RV_inst < RV_curr$version) message("Note: your ", R.version.string, 
+             " is outdated. The current version is ",RV_curr$version,
+             " (",as.Date(RV_curr$date),").\n",
              "Updating is optional. For instructions, you can", link)
+ }
 
 # Rstudio
-if(!"tools:rstudio" %in% search()) message("Note: you are not using Rstudio. Strongly recommended! Please", link)
+if(!"tools:rstudio" %in% search()) 
+ message("Note: you are not using Rstudio. Strongly recommended! Please", link)
 
 
 
 # Packages installed ----
 
 osm <- FALSE
-if(!requireNamespace("OSMscale", quietly=TRUE)) {errors <- TRUE ; osm <- TRUE}
+if(!isinstalled("OSMscale")) {errors <- TRUE ; osm <- TRUE}
 sf <- FALSE
-if(!requireNamespace("sf", quietly=TRUE)) {errors <- TRUE ; sf <- TRUE}
+if(!isinstalled("sf")) {errors <- TRUE ; sf <- TRUE}
 
 packs <- c("hydroGOF","airGR","leaflet","rgdal","mapview",
            "sf","OSMscale","dygraphs","extremeStat", 
            "geoR", "animation", "RColorBrewer", "boot", "jsonlite",
            "xts", "trend", "Kendall", "hydroTSM") 
-inst <- sapply(packs, function(p) requireNamespace(p, quietly=TRUE) )
+inst <- sapply(packs, isinstalled)
 if(any(!inst)) errors <- TRUE
 
 packs2get <- packs[!inst]
@@ -55,7 +73,7 @@ if(mapv)
      message("The installed version of package 'mapview' is too old. Please run:")
   else
      message("The package 'mapview' must be installed from github. Please run:")
-  cat(if(!requireNamespace("devtools", quietly=TRUE)) "install.packages('devtools'); ",
+  cat(if(!isinstalled("devtools")) "install.packages('devtools'); ",
   "devtools::install_github('environmentalinformatics-marburg/mapview', ref='develop')\n", sep="")
 }
 packs2get <- packs2get[packs2get!="mapview"]
@@ -83,10 +101,10 @@ if(errors){message("Afterwards, rerun:")
 
 if(!errors)
 message("Your system is ready for the course!\n",
-        "We're looking forward to seeing you at EGU on Monday at 15:30 in Room -2.31.\n",
-        "If not already done, please register via  berry-b@gmx.de\n",
-        "Please do not forget your laptop and come early, if possible.\n",
-        "If you want to refresh your basic R skills, you can visit\n",
+#        "We're looking forward to seeing you at EGU on Monday at 15:30 in Room -2.31.\n",
+#        "If not already done, please register via  berry-b@gmx.de\n",
+#        "Please do not forget your laptop and come early, if possible.\n",
+        "If you want to refresh your basic R skills first, you can visit\n",
         "browseURL('https://github.com/brry/rhydro#r-intro')")
 
 }
