@@ -1,7 +1,7 @@
 [course](#course) 
-/ [check](#check) 
 / [topics](#topics) 
 / [slides](#slides) 
+/ [check](#check) 
 / [resources](#resources) 
 / [install](#install) 
 / [packages](#packages) 
@@ -10,31 +10,16 @@
 ### course
 Using R in Hydrology - [EGU2017 Short Course](http://meetingorganizer.copernicus.org/EGU2017/session/25731) by YHS  
 Instructors: Shaun Harrigan, Katie Smith, Berry Boessenkool and Daniel Klotz  
-Organizer: Berry Boessenkool, PhD student at Potsdam University (Germany)  
+Organizer: Berry Boessenkool, Potsdam University (Germany), <berry-b@gmx.de>
 
-__To reserve a seat, please register via berry-b@gmx.de__  (16 registered so far, 2017-04-21).
-
-Participants are invited to post and discuss questions in the 
-[Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
-
-If you're new to R, you can get started [below](#install). 
-If you want to follow along on your laptop, please make sure it is up to the task:
-
-
-### check
-You can check if your laptop is prepared for the course by running the
-[checkpc](https://github.com/brry/rhydro/blob/master/checkpc.R) script in your R console:
-```R
-source("https://raw.githubusercontent.com/brry/rhydro/master/checkpc.R")
-```
-This will give you a confirmation message if everything is fine and give instructions otherwise.
-If you ran this before April 19th, please run it again (we have added more R packages).
+You are invited to post and discuss questions in the 
+[Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/).
 
 
 ### topics
 This course is directed primarily at hydrologists interested in using R for their research.
 You will get (a) an impression of how powerful R is as a tool and (b) all the code to get started yourself.
-The following topics will be covered:
+The following topics are covered:
 
 * Good coding practice, report generation (Rstudio, `rmarkdown`, R notebook)
 * Using R as GIS (reading a rainfall shapefile + Kriging, `sf` + `leaflet` + `mapview` + `OSMscale`)
@@ -46,7 +31,7 @@ The following topics will be covered:
 ### slides
 You can `rightclick - Save as` the 
 [html notebook with R output](https://github.com/brry/rhydro/raw/master/presentations/rhydro.nb.html)
-and then open the html document in a regular browser.
+and then open the html document in a regular browser.  
 For smartphones, you can try the [pdf](https://github.com/brry/rhydro/raw/master/presentations/rhydro.pdf)
 (without the interactive graphs).
 
@@ -54,19 +39,30 @@ To get all the material including the datasets and presentation source code, we 
 [download the whole github course repository](https://github.com/brry/rhydro/archive/master.zip).
 
 
+
+### check
+You can check if your laptop is prepared for the course by running the
+[checkpc](https://github.com/brry/rhydro/blob/master/checkpc.R) script in your R console:
+```R
+source("https://raw.githubusercontent.com/brry/rhydro/master/checkpc.R")
+```
+This will give instructions if packages are missing / outdated.
+
+
 ### resources
-* [R-Resources for Hyrology](http://abouthydrology.blogspot.co.uk/2012/08/r-resources-for-hydrologists.html) - A huge list of R-resources about hydrology
-* [hdtools](https://ropensci.github.io/hddtools/) - An R package, which facilitates access to a variety of online open data sources relevant for hydrologists
+* [R-Resources for Hyrology](http://abouthydrology.blogspot.co.uk/2012/08/r-resources-for-hydrologists.html) - huge list of R-resources about hydrology
+* [hdtools](https://ropensci.github.io/hddtools/) - R package to facilitate access to a variety of online open data sources relevant for hydrologists
+* [rdwd](https://github.com/brry/rdwd#rdwd) - R package specifically for German meteorological data
 * [airGR](https://cran.r-project.org/web/packages/airGR/vignettes/airGR.html) - The description of the airGR package
-* [R-weekly](https://rweekly.org/) - A weekly newsletter about all things R
-* [Rbloggers](https://www.r-bloggers.com/) - A blog aggregator about R
-* [Shiny](https://shiny.rstudio.com/) - The web application framework for R/Rstudio
-* [Rmarkdown](http://rmarkdown.rstudio.com/) - The document/notebook generation framework for R/Rstudio
-* [Github guides](https://guides.github.com/) - Introduction to gitHUB
+* [R-weekly](https://rweekly.org/) - weekly newsletter about all things R
+* [Rbloggers](https://www.r-bloggers.com/) - blog aggregator about R
+* [Shiny](https://shiny.rstudio.com/) - web application framework for R/Rstudio
+* [Rmarkdown](http://rmarkdown.rstudio.com/) - document/notebook generation framework for R/Rstudio
+* [Github guides](https://guides.github.com/) - Introduction to github
 * [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
-* [RShiny `influence regression app` by  David Wright]
-(https://davidpwright.shinyapps.io/LinearRegressionInfluenceExample/)
-* `Evapotranspiration` R package that enables the use of 17 well-known ET models in a consistent manner.
+* [RegressionInfluence](https://davidpwright.shinyapps.io/LinearRegressionInfluenceExample/) - Shiny App by  David Wright
+* [Evapotranspiration](https://cran.r-project.org/package=Evapotranspiration) -  R package that enables the use of 17 well-known ET models in a consistent manner.
+
 
 ### install
 install R and Rstudio:
