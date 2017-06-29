@@ -62,6 +62,10 @@ This will give instructions if packages are missing / outdated.
 * [Hydrology in R Facebook group](https://www.facebook.com/groups/1130214777123909/)
 * [RegressionInfluence](https://davidpwright.shinyapps.io/LinearRegressionInfluenceExample/) - Shiny App by  David Wright
 * [Evapotranspiration](https://cran.r-project.org/package=Evapotranspiration) -  R package that enables the use of 17 well-known ET models in a consistent manner.
+* [GDAL intro part 1 (installation & gdalinfo)](https://medium.com/planet-stories/a-gentle-introduction-to-gdal-part-1-a3253eb96082),
+  [part 2 (Map Projections & gdalwarp)](https://medium.com/planet-stories/a-gentle-introduction-to-gdal-part-2-map-projections-gdalwarp-e05173bd710a),
+  [part 3 (Geodesy & Local Map Projections)](https://medium.com/@robsimmon/a-gentle-introduction-to-gdal-part-3-geodesy-local-map-projections-794c6ff675ca) and
+  [part 4 (Working with Satellite Data)](https://medium.com/@robsimmon/a-gentle-introduction-to-gdal-part-4-working-with-satellite-data-d3835b5e2971),
 
 
 ### install
