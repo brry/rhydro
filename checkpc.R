@@ -3,14 +3,12 @@
 
 checkpcfun <- function(...) # to keep everything within a function environment
 {
-link <- " visit \nbrowseURL('https://github.com/brry/rhydro#install')\n"
+link <- " visit \nbrowseURL('https://github.com/brry/course#install')\n"
 errors <- FALSE # are there significant insufficiencies?
 
 isinstalled <- function(p)    # is a package installed and usable?
  {
- out <- requireNamespace(p, quietly=TRUE)
- try(unloadNamespace(p), silent=TRUE)
- out
+ suppressMessages(suppressWarnings(requireNamespace(p, quietly = TRUE)))
  }
 
 # R ----
@@ -64,20 +62,6 @@ packs2get <- packs[!inst]
                    
                    
 # Package versions ----
-mapv <- "mapview" %in% packs2get
-if(!mapv) if(packageVersion("mapview") < "1.2.68") mapv <- TRUE
-if(mapv)
-  {
-  errors <- TRUE
-  if("mapview" %in% packs2get)
-     message("The installed version of package 'mapview' is too old. Please run:")
-  else
-     message("The package 'mapview' must be installed from github. Please run:")
-  cat(if(!isinstalled("devtools")) "install.packages('devtools'); ",
-  "devtools::install_github('environmentalinformatics-marburg/mapview', ref='develop')\n", sep="")
-}
-packs2get <- packs2get[packs2get!="mapview"]
-
 cranpacks <- available.packages()
 packs <- packs[inst]
 outdated <- sapply(packs, function(p) packageVersion(p) < cranpacks[p,]["Version"])
@@ -94,7 +78,7 @@ if(osm) message("If OSMscale installation fails, read the instructions at ",
           "\nhttps://github.com/brry/OSMscale#installation")
 if(sf & Sys.info()["sysname"]=="Linux")
           message("If sf installation fails, read the instructions at ",
-          "\nhttps://github.com/brry/rhydro#packages")
+          "\nhttps://github.com/brry/course#packages")
 if(errors){message("Afterwards, rerun:")
           cat("source('https://raw.githubusercontent.com/brry/rhydro/master/checkpc.R')\n")
           message("Please report if something in these instructions is not working via  berry-b@gmx.de")}
